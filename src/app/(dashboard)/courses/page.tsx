@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, Grid3X3, List } from "lucide-react";
 import CourseCard from "@/components/ui/CourseCard";
 import CourseListItem from "@/components/ui/CourseListItem";
 import ModernSelect from "@/components/ui/ModernSelect";
@@ -12,73 +12,108 @@ const courses = [
     id: "c1",
     title: "Web Geliştirme 101",
     teacher: "Dr. Ayşe Yılmaz",
-    cover: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=250&fit=crop&crop=center",
     progress: 45,
     slug: "web-gelistirme-101",
     category: "Bilgisayar",
     duration: "12 hafta",
     level: "Başlangıç",
-    status: "aktif"
+    status: "aktif",
+    quizCount: 8,
+    materialCount: 24,
+    videoCount: 36,
+    liveSessionCount: 4,
+    nextLiveSession: "Yarın 14:00",
+    lastUpdated: "2 saat önce",
+    isFavorite: true
   },
   {
     id: "c2",
     title: "Veri Yapıları ve Algoritmalar",
     teacher: "Prof. Mehmet Demir",
-    cover: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&h=250&fit=crop&crop=center",
     progress: 12,
     slug: "veri-yapilari-algoritmalar",
     category: "Bilgisayar",
     duration: "16 hafta",
     level: "Orta",
-    status: "aktif"
+    status: "aktif",
+    quizCount: 12,
+    materialCount: 32,
+    videoCount: 48,
+    liveSessionCount: 6,
+    nextLiveSession: "Cuma 16:00",
+    lastUpdated: "1 gün önce",
+    isFavorite: false
   },
   {
     id: "c3",
     title: "Veritabanı Temelleri",
     teacher: "Ece Kaya",
-    cover: "https://images.unsplash.com/photo-1544383835-bda2bc66a6d3?w=400&h=250&fit=crop&crop=center",
     progress: 78,
     slug: "veritabani-temelleri",
     category: "Bilgisayar",
     duration: "14 hafta",
     level: "Başlangıç",
-    status: "aktif"
+    status: "aktif",
+    quizCount: 6,
+    materialCount: 18,
+    videoCount: 28,
+    liveSessionCount: 3,
+    nextLiveSession: "Pazartesi 10:00",
+    lastUpdated: "3 saat önce",
+    isFavorite: true
   },
   {
     id: "c4",
     title: "Matematik 101",
     teacher: "Prof. Dr. Ahmet Yılmaz",
-    cover: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=250&fit=crop&crop=center",
     progress: 75,
     slug: "matematik-101",
     category: "Matematik",
     duration: "15 hafta",
     level: "Başlangıç",
-    status: "aktif"
+    status: "aktif",
+    quizCount: 10,
+    materialCount: 22,
+    videoCount: 30,
+    liveSessionCount: 5,
+    nextLiveSession: "Salı 15:00",
+    lastUpdated: "5 saat önce",
+    isFavorite: false
   },
   {
     id: "c5",
     title: "İngilizce Kompozisyon",
     teacher: "Dr. Sarah Johnson",
-    cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=250&fit=crop&crop=center",
     progress: 60,
     slug: "ingilizce-kompozisyon",
     category: "Dil",
     duration: "10 hafta",
     level: "Orta",
-    status: "aktif"
+    status: "aktif",
+    quizCount: 5,
+    materialCount: 15,
+    videoCount: 20,
+    liveSessionCount: 2,
+    nextLiveSession: "Çarşamba 11:00",
+    lastUpdated: "1 gün önce",
+    isFavorite: true
   },
   {
     id: "c6",
     title: "Bilgisayar Programlama",
     teacher: "Prof. Dr. Mehmet Kaya",
-    cover: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=250&fit=crop&crop=center",
     progress: 90,
     slug: "bilgisayar-programlama",
     category: "Bilgisayar",
     duration: "18 hafta",
     level: "İleri",
-    status: "tamamlanan"
+    status: "tamamlanan",
+    quizCount: 15,
+    materialCount: 40,
+    videoCount: 60,
+    liveSessionCount: 8,
+    lastUpdated: "1 hafta önce",
+    isFavorite: false
   }
 ];
 
@@ -116,30 +151,32 @@ export default function CoursesPage() {
               Bu dönem kayıtlı olduğun dersler ve detaylı ilerleme durumun
             </p>
           </div>
-          <div className="mt-4 lg:mt-0">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  viewMode === "grid" 
-                    ? "bg-primary-500/90 text-white shadow-lg" 
-                    : "bg-white/20 dark:bg-gray-700/20 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-gray-700/30 border border-white/20 dark:border-gray-600/30 backdrop-blur-sm"
-                }`}
-              >
-                Grid
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  viewMode === "list" 
-                    ? "bg-primary-500/90 text-white shadow-lg" 
-                    : "bg-white/20 dark:bg-gray-700/20 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-gray-700/30 border border-white/20 dark:border-gray-600/30 backdrop-blur-sm"
-                }`}
-              >
-                Liste
-              </button>
-            </div>
-          </div>
+                     <div className="mt-4 lg:mt-0">
+             <div className="flex gap-2">
+               <button
+                 onClick={() => setViewMode("grid")}
+                 className={`p-3 rounded-xl transition-all duration-300 ${
+                   viewMode === "grid" 
+                     ? "bg-primary-500/90 text-white shadow-lg" 
+                     : "bg-white/20 dark:bg-gray-700/20 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-gray-700/30 border border-white/20 dark:border-gray-600/30 backdrop-blur-sm"
+                 }`}
+                 title="Grid Görünümü"
+               >
+                 <Grid3X3 className="h-5 w-5" />
+               </button>
+               <button
+                 onClick={() => setViewMode("list")}
+                 className={`p-3 rounded-xl transition-all duration-300 ${
+                   viewMode === "list" 
+                     ? "bg-primary-500/90 text-white shadow-lg" 
+                     : "bg-white/20 dark:bg-gray-700/20 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-gray-700/30 border border-white/20 dark:border-gray-600/30 backdrop-blur-sm"
+                 }`}
+                 title="Liste Görünümü"
+               >
+                 <List className="h-5 w-5" />
+               </button>
+             </div>
+           </div>
         </div>
 
         {/* Filtreler ve Arama */}
@@ -225,8 +262,8 @@ export default function CoursesPage() {
       {/* Ders Kartları */}
       {filteredCourses.length > 0 ? (
         <div className={viewMode === "grid" 
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          : "space-y-4"
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          : "space-y-3"
         }>
           {filteredCourses.map((course, index) => (
             viewMode === "grid" ? (

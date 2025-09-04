@@ -1,21 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play, Clock, BookOpen, Award, Star, Users, Calendar, User } from "lucide-react";
+import { Play, Clock, BookOpen, Award, Star, Users, Calendar, User, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useState } from "react";
 
 interface Course {
   id: string;
   title: string;
   teacher: string;
-  cover: string;
   progress: number;
   slug: string;
   category?: string;
   duration?: string;
   level?: string;
   status?: string;
+  quizCount?: number;
+  materialCount?: number;
+  videoCount?: number;
+  liveSessionCount?: number;
+  nextLiveSession?: string;
+  lastUpdated?: string;
+  isFavorite?: boolean;
 }
 
 interface CourseListItemProps {
@@ -25,9 +31,15 @@ interface CourseListItemProps {
 
 export default function CourseListItem({ course, delay = 0 }: CourseListItemProps) {
   const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(course.isFavorite || false);
 
   const handleContinue = () => {
     router.push(`/courses/${course.slug}`);
+  };
+
+  const handleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsFavorite(!isFavorite);
   };
 
   const getStatusColor = (status?: string) => {
@@ -87,7 +99,8 @@ export default function CourseListItem({ course, delay = 0 }: CourseListItemProp
         x: 4,
         transition: { duration: 0.3, ease: "easeOut" }
       }}
-      className="group relative bg-white/10 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-6 hover:bg-white/15 dark:hover:bg-gray-800/30 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl dark:shadow-gray-900/20 overflow-hidden"
+      onClick={handleContinue}
+      className="group relative bg-white/10 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-4 hover:bg-white/15 dark:hover:bg-gray-800/30 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl dark:shadow-gray-900/20 overflow-hidden"
     >
       {/* Glass Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 dark:from-gray-700/5 dark:to-gray-700/10 rounded-3xl"></div>
@@ -96,46 +109,78 @@ export default function CourseListItem({ course, delay = 0 }: CourseListItemProp
       <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary-50/20 dark:from-primary-400/10 to-transparent rounded-full -translate-y-24 translate-x-24 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-blue-50/20 dark:from-blue-400/10 to-transparent rounded-full translate-y-16 -translate-x-16 pointer-events-none"></div>
 
-      <div className="relative z-10 flex flex-col lg:flex-row gap-6">
-        {/* Course Cover */}
-        <div className="lg:w-52 h-32 bg-gradient-to-br from-primary-100 to-pastel-blue rounded-2xl relative overflow-hidden flex-shrink-0 group-hover:shadow-lg transition-shadow duration-300">
-          <Image
-            src={course.cover}
-            alt={course.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+      <div className="relative z-10 flex flex-col lg:flex-row gap-4">
+                 {/* Course Cover with Color Gradient */}
+         <div className="lg:w-48 h-28 rounded-2xl relative flex-shrink-0 group-hover:shadow-lg transition-all duration-300">
+          {/* Dynamic Color Gradient based on category */}
+          <div className={`absolute inset-0 ${
+            course.category === "Bilgisayar" 
+              ? "bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700"
+              : course.category === "Matematik"
+              ? "bg-gradient-to-br from-green-500 via-emerald-600 to-teal-700"
+              : course.category === "Dil"
+              ? "bg-gradient-to-br from-orange-500 via-red-600 to-pink-700"
+              : "bg-gradient-to-br from-gray-500 via-slate-600 to-zinc-700"
+          }`}></div>
+          
+          {/* Subtle Pattern Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent"></div>
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3)_0%,transparent_50%)]"></div>
+            <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.2)_0%,transparent_50%)]"></div>
+          </div>
+          
+                  {/* Status Badge */}
+        {course.status && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: delay + 0.2 }}
+            className="absolute top-2 right-2"
+          >
+            <span className={`px-2.5 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${getStatusColor(course.status)}`}>
+              {getStatusText(course.status)}
+            </span>
+          </motion.div>
+        )}
+
+        {/* Favorite Button */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: delay + 0.25 }}
+          onClick={handleFavorite}
+          className="absolute top-2 left-2 z-20 p-1.5 bg-white/20 dark:bg-gray-800/40 backdrop-blur-md rounded-full border border-white/30 dark:border-gray-600/40 hover:bg-white/30 dark:hover:bg-gray-700/50 transition-all duration-200 group/fav relative"
+        >
+          <Heart 
+            className={`h-3.5 w-3.5 transition-all duration-200 ${
+              isFavorite 
+                ? "text-red-500 dark:text-red-400 fill-current" 
+                : "text-white/80 dark:text-gray-300 group-hover/fav:text-red-400 dark:group-hover/fav:text-red-300"
+            }`}
           />
           
-          {/* Subtle Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent"></div>
+          {/* Modern Tooltip */}
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-xl opacity-0 group-hover/fav:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+            {isFavorite ? "Favorilerden çıkar" : "Favorilere ekle"}
+            {/* Tooltip Arrow */}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></div>
+          </div>
+        </motion.button>
           
-          {/* Status Badge */}
-          {course.status && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: delay + 0.2 }}
-              className="absolute top-2 right-2"
-            >
-              <span className={`px-2.5 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${getStatusColor(course.status)}`}>
-                {getStatusText(course.status)}
-              </span>
-            </motion.div>
-          )}
-          
-          {/* Level Badge */}
-          {course.level && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: delay + 0.3 }}
-              className="absolute top-2 left-2"
-            >
-              <span className={`px-2.5 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${getLevelColor(course.level)}`}>
-                {course.level}
-              </span>
-            </motion.div>
-          )}
+                  {/* Level Badge */}
+        {course.level && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: delay + 0.3 }}
+            className="absolute top-2 left-12"
+          >
+            <span className={`px-2.5 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${getLevelColor(course.level)}`}>
+              {course.level}
+            </span>
+          </motion.div>
+        )}
 
           {/* Category Icon */}
           {course.category && (
@@ -259,30 +304,80 @@ export default function CourseListItem({ course, delay = 0 }: CourseListItemProp
                 </div>
               </div>
 
-              {/* Minimal Stats */}
-              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                <div className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  <span>1.2k</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="h-3 w-3 text-yellow-500 dark:text-yellow-400 fill-current" />
-                  <span>4.8</span>
+              {/* Course Resources Stats */}
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-2">
+                  {/* Quiz Count */}
+                  {course.quizCount !== undefined && (
+                    <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-2 py-1.5 rounded-lg border border-white/20 dark:border-gray-600/30">
+                      <div className="w-6 h-6 bg-purple-400/20 dark:bg-purple-500/20 rounded-md flex items-center justify-center">
+                        <span className="text-purple-600 dark:text-purple-400 text-xs font-bold">?</span>
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-300">{course.quizCount} Quiz</span>
+                    </div>
+                  )}
+
+                  {/* Material Count */}
+                  {course.materialCount !== undefined && (
+                    <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-2 py-1.5 rounded-lg border border-white/20 dark:border-gray-600/30">
+                      <div className="w-6 h-6 bg-blue-400/20 dark:bg-blue-500/20 rounded-md flex items-center justify-center">
+                        <BookOpen className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-300">{course.materialCount} Materyal</span>
+                    </div>
+                  )}
+
+                  {/* Video Count */}
+                  {course.videoCount !== undefined && (
+                    <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-2 py-1.5 rounded-lg border border-white/20 dark:border-gray-600/30">
+                      <div className="w-6 h-6 bg-red-400/20 dark:bg-red-500/20 rounded-md flex items-center justify-center">
+                        <Play className="h-3 w-3 text-red-600 dark:text-red-400" />
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-300">{course.videoCount} Video</span>
+                    </div>
+                  )}
+
+                  {/* Live Session Count */}
+                  {course.liveSessionCount !== undefined && (
+                    <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-2 py-1.5 rounded-lg border border-white/20 dark:border-gray-600/30">
+                      <div className="w-6 h-6 bg-green-400/20 dark:bg-green-500/20 rounded-md flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 bg-green-500 dark:bg-green-400 rounded-full animate-pulse"></div>
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-300">{course.liveSessionCount} Canlı</span>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* Next Live Session Info */}
+              {course.nextLiveSession && (
+                <div className="mb-4 p-2 bg-gradient-to-r from-green-400/10 to-blue-400/10 dark:from-green-500/10 dark:to-blue-500/10 backdrop-blur-sm rounded-lg border border-green-300/20 dark:border-green-500/20">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-3 w-3 text-green-600 dark:text-green-400" />
+                    <div>
+                      <p className="text-xs text-green-600 dark:text-green-400 font-medium">Sonraki Canlı Ders</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">{course.nextLiveSession}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Last Updated Info */}
+              {course.lastUpdated && (
+                <div className="mb-4 text-xs text-gray-500 dark:text-gray-400">
+                  Son güncelleme: {course.lastUpdated}
+                </div>
+              )}
             </div>
 
             {/* Action Button */}
             <div className="flex-shrink-0">
-              <motion.button
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={handleContinue}
-                className="bg-gradient-to-r from-primary-500/90 to-primary-600/90 backdrop-blur-sm text-white py-3 px-6 rounded-2xl hover:from-primary-500 hover:to-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 focus:ring-offset-white/50 dark:focus:ring-offset-gray-800 transition-all duration-200 flex items-center gap-3 font-medium shadow-lg hover:shadow-md transform hover:-translate-y-0.5 whitespace-nowrap border border-white/20 dark:border-gray-600/30"
+              <motion.div
+                className="bg-gradient-to-r from-primary-500/90 to-primary-600/90 backdrop-blur-sm text-white py-3 px-6 rounded-2xl transition-all duration-200 flex items-center gap-3 font-medium shadow-lg whitespace-nowrap border border-white/20 dark:border-gray-600/30 pointer-events-none"
               >
                 <Play className="h-4 w-4" />
                 {course.progress === 100 ? "Tekrar İzle" : "Devam Et"}
-              </motion.button>
+              </motion.div>
             </div>
           </div>
         </div>
