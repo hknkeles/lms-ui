@@ -1,0 +1,7 @@
+[
+    {"id":"c1","title":"Web Geliştirme 101","instructor":"Dr. Ayşe Yılmaz","progress":45,"coverUrl":"/images/course1.jpg"},
+    {"id":"c2","title":"Veri Yapıları ve Algoritmalar","instructor":"Prof. Mehmet Demir","progress":12,"coverUrl":"/images/course2.jpg"},
+    {"id":"c3","title":"Veritabanı Temelleri","instructor":"Ece Kaya","progress":78,"coverUrl":"/images/course3.jpg"}
+  ]
+  
+  
