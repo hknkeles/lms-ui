@@ -186,17 +186,69 @@ export default function CourseCard({ course, delay = 0 }: CourseCardProps) {
             </div>
           </div>
           
-          {/* Progress Bar */}
-          <div className="w-full bg-gray-200/50 dark:bg-gray-700/50 backdrop-blur-sm rounded-full h-2.5 overflow-hidden border border-white/20 dark:border-gray-600/30">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${course.progress}%` }}
-              transition={{ duration: 1.5, delay: delay + 0.5, ease: "easeOut" }}
-              className="h-full rounded-full relative bg-gradient-to-r from-primary-400 to-primary-600 dark:from-primary-500 dark:to-primary-600"
-            >
-              {/* Subtle Shine */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 dark:via-white/5 to-transparent"></div>
-            </motion.div>
+          {/* Modern Progress Bar */}
+          <div className="relative">
+            {/* Background Track */}
+            <div className="w-full bg-gradient-to-r from-gray-100/80 to-gray-200/80 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm rounded-2xl h-3 overflow-hidden border border-white/30 dark:border-gray-600/40 shadow-inner">
+              {/* Progress Fill */}
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${course.progress}%` }}
+                transition={{ duration: 1.2, delay: delay + 0.5, ease: "easeOut" }}
+                className="h-full rounded-2xl relative"
+              >
+                {/* Dynamic Gradient based on progress */}
+                <div className={`absolute inset-0 rounded-2xl ${
+                  course.progress < 30 
+                    ? 'bg-gradient-to-r from-red-400 via-red-500 to-red-600 dark:from-red-500 dark:via-red-600 dark:to-red-700'
+                    : course.progress < 70
+                    ? 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 dark:from-yellow-500 dark:via-yellow-600 dark:to-yellow-700'
+                    : course.progress < 100
+                    ? 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 dark:from-blue-500 dark:via-blue-600 dark:to-blue-700'
+                    : 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 dark:from-green-500 dark:via-green-600 dark:to-green-700'
+                }`}></div>
+                
+                {/* Shine Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-2xl animate-pulse"></div>
+                
+                {/* Glow Effect */}
+                <div className={`absolute inset-0 rounded-2xl blur-sm ${
+                  course.progress < 30 
+                    ? 'bg-red-400/30 dark:bg-red-500/30'
+                    : course.progress < 70
+                    ? 'bg-yellow-400/30 dark:bg-yellow-500/30'
+                    : course.progress < 100
+                    ? 'bg-blue-400/30 dark:bg-blue-500/30'
+                    : 'bg-green-400/30 dark:bg-green-500/30'
+                }`}></div>
+                
+                {/* Progress Dots */}
+                {course.progress > 0 && (
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-1.5 h-1.5 bg-white/80 rounded-full shadow-sm"></div>
+                )}
+              </motion.div>
+            </div>
+            
+            {/* Progress Indicator */}
+            <div className={`absolute -top-1 -right-1 w-5 h-5 bg-white dark:bg-gray-800 rounded-full border-2 shadow-lg flex items-center justify-center ${
+              course.progress < 30 
+                ? 'border-red-500 dark:border-red-400'
+                : course.progress < 70
+                ? 'border-yellow-500 dark:border-yellow-400'
+                : course.progress < 100
+                ? 'border-blue-500 dark:border-blue-400'
+                : 'border-green-500 dark:border-green-400'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${
+                course.progress < 30 
+                  ? 'bg-red-500 dark:bg-red-400'
+                  : course.progress < 70
+                  ? 'bg-yellow-500 dark:bg-yellow-400'
+                  : course.progress < 100
+                  ? 'bg-blue-500 dark:bg-blue-400'
+                  : 'bg-green-500 dark:bg-green-400'
+              }`}></div>
+            </div>
           </div>
         </div>
 
