@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { createPortal } from "react-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Option {
   value: string;
@@ -72,24 +73,26 @@ export default function ModernSelect({ options, value, onChange, placeholder, cl
             minWidth: dropdownRef.current ? dropdownRef.current.offsetWidth : 'auto'
           }}
         >
-          <div className="py-2 max-h-60 overflow-y-auto">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleSelect(option)}
-                className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150 flex items-center justify-between ${
-                  option.value === value
-                    ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
-                    : "text-gray-700 dark:text-gray-200"
-                }`}
-              >
-                <span>{option.label}</span>
-                {option.value === value && (
-                  <Check className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-                )}
-              </button>
-            ))}
-          </div>
+          <ScrollArea className="max-h-60">
+            <div className="py-2">
+              {options.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleSelect(option)}
+                  className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150 flex items-center justify-between ${
+                    option.value === value
+                      ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+                      : "text-gray-700 dark:text-gray-200"
+                  }`}
+                >
+                  <span>{option.label}</span>
+                  {option.value === value && (
+                    <Check className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
         </div>,
         document.body
       )}

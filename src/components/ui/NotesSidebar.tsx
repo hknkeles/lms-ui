@@ -16,6 +16,7 @@ import {
   Clock,
   Star
 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Note {
   id: string;
@@ -361,7 +362,7 @@ export default function NotesSidebar({ isOpen, onClose, courseId, courseTitle }:
             </div>
 
             {/* Notes List */}
-            <div className="flex-1 overflow-y-auto px-4 pb-4">
+            <ScrollArea className="flex-1 px-4 pb-4">
               <div className="space-y-2">
                 {filteredNotes.map((note) => (
                   <motion.div
@@ -458,7 +459,7 @@ export default function NotesSidebar({ isOpen, onClose, courseId, courseTitle }:
                   </p>
                 </div>
               )}
-            </div>
+            </ScrollArea>
 
             {/* Note Detail Panel */}
             {selectedNote && (

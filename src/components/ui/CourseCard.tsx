@@ -38,8 +38,8 @@ const CourseCard = memo(function CourseCard({ course, delay = 0 }: CourseCardPro
   const favoriteButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleContinue = () => {
-    // İlk dersi otomatik olarak aç
-    router.push(`/courses/${course.slug}/lesson`);
+    // Seçilen dersin slug'ı ile courses sayfasına yönlendir
+    router.push(`/courses/${course.slug}`);
   };
 
   const handleFavorite = (e: React.MouseEvent) => {

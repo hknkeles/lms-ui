@@ -48,6 +48,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -492,7 +493,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </div>
 
         {/* Navigation - Scrollable Area */}
-        <div className="flex-1 overflow-y-auto">
+        <ScrollArea className="flex-1">
           <nav className="p-4 space-y-2">
             {/* Selected Category Items */}
             {(() => {
@@ -546,7 +547,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               );
             })()}
           </nav>
-        </div>
+        </ScrollArea>
 
         {/* Bottom Section - User Info + Logout */}
         <div className="p-4 space-y-3 border-t border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800 flex-shrink-0">

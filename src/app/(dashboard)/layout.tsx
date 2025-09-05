@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "@/components/ui/Sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const getPageTitle = (pathname: string) => {
   switch (pathname) {
@@ -69,9 +70,11 @@ function DashboardLayoutContent({
         sidebarOpen ? 'lg:ml-[22rem]' : 'lg:ml-16'
       }`}>
         {/* Content */}
-        <main className="p-8 lg:p-10 pt-8 lg:pt-10 bg-gray-50 dark:bg-gray-900">
-          {children}
-        </main>
+        <ScrollArea className="flex-1">
+          <main className="p-8 lg:p-10 pt-8 lg:pt-10 bg-gray-50 dark:bg-gray-900">
+            {children}
+          </main>
+        </ScrollArea>
       </div>
     </div>
   );
