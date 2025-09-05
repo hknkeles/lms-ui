@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "@/components/ui/Sidebar";
 import { useAuth } from "@/hooks/useAuth";
+import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 
 const getPageTitle = (pathname: string) => {
   switch (pathname) {
@@ -24,12 +25,12 @@ const getPageTitle = (pathname: string) => {
   }
 };
 
-export default function DashboardLayout({
+function DashboardLayoutContent({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false); // Desktop'ta varsayılan olarak kapalı
+  const { sidebarOpen, setSidebarOpen } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
@@ -73,5 +74,19 @@ export default function DashboardLayout({
         </main>
       </div>
     </div>
+  );
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <SidebarProvider>
+      <DashboardLayoutContent>
+        {children}
+      </DashboardLayoutContent>
+    </SidebarProvider>
   );
 }

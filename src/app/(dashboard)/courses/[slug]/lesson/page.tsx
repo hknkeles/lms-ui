@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSidebar } from "@/contexts/SidebarContext";
 import { 
   Play, 
   Pause, 
@@ -252,6 +253,7 @@ const lessonData = {
 };
 
 export default function LessonPage() {
+  const { sidebarOpen } = useSidebar();
   const params = useParams();
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -482,6 +484,7 @@ export default function LessonPage() {
     };
   }, []);
 
+
   if (!course || !currentLesson) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20 flex items-center justify-center">
@@ -496,7 +499,9 @@ export default function LessonPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Modern Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 shadow-sm rounded-xl">
+      <div className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 fixed top-0 z-40 shadow-lg transition-all duration-300 ${
+        sidebarOpen ? 'left-[22rem] right-0' : 'left-16 right-0'
+      }`}>
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -547,13 +552,15 @@ export default function LessonPage() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-80px)]">
+      <div className={`flex flex-col lg:flex-row h-[calc(100vh-80px)] pt-20 transition-all duration-300 ${
+        sidebarOpen ? 'ml-[22rem]' : 'ml-16'
+      }`}>
         {/* Main Video Area */}
         <div 
           className="flex-1 transition-all duration-300"
           style={{ marginRight: showSidebar ? `${sidebarWidth}px` : '0' }}
         >
-          <div className={`relative bg-black rounded-xl m-4 lg:m-6 overflow-hidden shadow-2xl max-w-4xl mx-auto ${isFullscreen ? 'fixed inset-0 z-50 m-0 rounded-none' : ''}`}>
+          <div className={`relative bg-black rounded-xl m-4 lg:m-6 overflow-hidden shadow-2xl w-full max-w-6xl mx-auto ${isFullscreen ? 'fixed inset-0 z-50 m-0 rounded-none' : ''}`}>
             {/* Video Player */}
             <div className={`relative w-full ${isFullscreen ? 'h-full' : 'aspect-video'}`}>
               <video
@@ -876,7 +883,7 @@ export default function LessonPage() {
               animate={{ x: 0 }}
               exit={{ x: sidebarWidth }}
               transition={{ duration: 0.3 }}
-              className="fixed right-0 top-[120px] bottom-0 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 z-30 shadow-xl"
+              className="fixed right-0 top-20 bottom-0 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 z-30 shadow-xl"
               style={{ width: `${sidebarWidth}px` }}
             >
               {/* Resize Handle */}
