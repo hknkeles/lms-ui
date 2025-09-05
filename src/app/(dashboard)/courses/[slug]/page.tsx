@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, FileText, CheckCircle, Play, Link as LinkIco
 import { useSidebar } from "@/contexts/SidebarContext";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 // Her ders için ayrı mock veri setleri
 const courseData = {
@@ -419,6 +419,7 @@ const getLessonIcon = (type: string) => {
 export default function LessonPage() {
   const { sidebarOpen } = useSidebar();
   const params = useParams();
+  const router = useRouter();
   const courseSlug = params.slug as string || 'tarih'; // Varsayılan olarak tarih
   
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
@@ -565,7 +566,10 @@ export default function LessonPage() {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+              <button 
+                onClick={() => router.back()}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
                 <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </button>
               <div className="flex items-center gap-3">
