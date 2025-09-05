@@ -68,7 +68,7 @@ export default function DashboardLayout({
         sidebarOpen ? 'lg:ml-[22rem]' : 'lg:ml-16'
       }`}>
         {/* Content */}
-        <main className="p-6 lg:p-6 pt-6 lg:pt-6 bg-gray-50 dark:bg-gray-900">
+        <main className="p-8 lg:p-10 pt-8 lg:pt-10 bg-gray-50 dark:bg-gray-900">
           {children}
         </main>
       </div>

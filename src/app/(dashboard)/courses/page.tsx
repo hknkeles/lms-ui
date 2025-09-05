@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, X, Grid3X3, List } from "lucide-react";
 import CourseCard from "@/components/ui/CourseCard";
-import CourseListItem from "@/components/ui/CourseListItem";
+import NotesSidebar from "@/components/ui/NotesSidebar";
+import { BookOpen, Plus, Search, Filter, StickyNote, X } from "lucide-react";
 import ModernSelect from "@/components/ui/ModernSelect";
 
 // Mock data - gerçek uygulamada API'den gelecek
@@ -117,16 +117,12 @@ const courses = [
   }
 ];
 
-const categories = ["Tümü", "Bilgisayar", "Matematik", "Dil"];
-const levels = ["Tümü", "Başlangıç", "Orta", "İleri"];
-const statuses = ["Tümü", "aktif", "tamamlanan", "gelecek"];
-
 export default function CoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Tümü");
   const [selectedLevel, setSelectedLevel] = useState("Tümü");
   const [selectedStatus, setSelectedStatus] = useState("Tümü");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isNotesSidebarOpen, setIsNotesSidebarOpen] = useState(false);
 
   const filteredCourses = useMemo(() => {
     return courses.filter(course => {
@@ -140,155 +136,89 @@ export default function CoursesPage() {
     });
   }, [searchTerm, selectedCategory, selectedLevel, selectedStatus]);
 
+  // Get unique categories and levels for filters
+  const categories = ["Tümü", ...Array.from(new Set(courses.map(course => course.category).filter(Boolean)))];
+  const levels = ["Tümü", ...Array.from(new Set(courses.map(course => course.level).filter(Boolean)))];
+  const statuses = ["Tümü", "aktif", "tamamlanan", "gelecek"];
+
   return (
-    <div className="space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
-      {/* Header ve Filtreler */}
-      <div className="bg-white/10 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Tüm Derslerim</h1>
-            <p className="text-gray-600 dark:text-gray-300 text-lg">
-              Bu dönem kayıtlı olduğun dersler ve detaylı ilerleme durumun
-            </p>
-          </div>
-                     <div className="mt-4 lg:mt-0">
-             <div className="flex gap-2">
-               <button
-                 onClick={() => setViewMode("grid")}
-                 className={`p-3 rounded-xl transition-all duration-300 ${
-                   viewMode === "grid" 
-                     ? "bg-primary-500/90 text-white shadow-lg" 
-                     : "bg-white/20 dark:bg-gray-700/20 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-gray-700/30 border border-white/20 dark:border-gray-600/30 backdrop-blur-sm"
-                 }`}
-                 title="Grid Görünümü"
-               >
-                 <Grid3X3 className="h-5 w-5" />
-               </button>
-               <button
-                 onClick={() => setViewMode("list")}
-                 className={`p-3 rounded-xl transition-all duration-300 ${
-                   viewMode === "list" 
-                     ? "bg-primary-500/90 text-white shadow-lg" 
-                     : "bg-white/20 dark:bg-gray-700/20 text-gray-700 dark:text-gray-200 hover:bg-white/30 dark:hover:bg-gray-700/30 border border-white/20 dark:border-gray-600/30 backdrop-blur-sm"
-                 }`}
-                 title="Liste Görünümü"
-               >
-                 <List className="h-5 w-5" />
-               </button>
-             </div>
-           </div>
-        </div>
-
-        {/* Filtreler ve Arama */}
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* Arama */}
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
-              <input
-                type="text"
-                placeholder="Derse göre filtrele..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-white/30 dark:border-gray-600/30 rounded-2xl focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-all duration-300 bg-white/20 dark:bg-gray-700/20 backdrop-blur-sm placeholder-gray-500 dark:placeholder-gray-400 text-gray-700 dark:text-gray-200"
-              />
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Header */}
+      <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border-b border-white/30 dark:border-gray-700/30 sticky top-0 z-30 rounded-b-3xl">
+        <div className="w-full px-8 sm:px-12 lg:px-16 py-4 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <div className="p-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl shadow-lg">
+                <BookOpen className="h-12 w-12 text-white" />
+              </div>
+              <div>
+                <h1 className="text-5xl font-bold text-gray-900 dark:text-white">Tüm Dersler</h1>
+                <p className="text-xl text-gray-600 dark:text-gray-400 mt-3">
+                  {filteredCourses.length} ders bulundu
+                </p>
+              </div>
             </div>
+            
           </div>
-
-          {/* Kategori Filtresi */}
-          <div className="flex gap-2">
-            <ModernSelect
-              options={[
-                { value: "Tümü", label: "Eğitmene göre filtrele" },
-                { value: "Bilgisayar", label: "Bilgisayar" },
-                { value: "Matematik", label: "Matematik" },
-                { value: "Dil", label: "Dil" }
-              ]}
-              value={selectedCategory}
-              onChange={setSelectedCategory}
-              placeholder="Eğitmene göre filtrele"
-            />
-
-            <ModernSelect
-              options={[
-                { value: "Tümü", label: "Seviyeye göre filtrele" },
-                { value: "Başlangıç", label: "Başlangıç" },
-                { value: "Orta", label: "Orta" },
-                { value: "İleri", label: "İleri" }
-              ]}
-              value={selectedLevel}
-              onChange={setSelectedLevel}
-              placeholder="Seviyeye göre filtrele"
-            />
-
-            <ModernSelect
-              options={[
-                { value: "Tümü", label: "Duruma göre filtrele" },
-                { value: "aktif", label: "Aktif" },
-                { value: "tamamlanan", label: "Tamamlanan" },
-                { value: "gelecek", label: "Gelecek" }
-              ]}
-              value={selectedStatus}
-              onChange={setSelectedStatus}
-              placeholder="Duruma göre filtrele"
-            />
-
-            {/* Minimal Temizleme Butonu */}
-            {(selectedCategory !== "Tümü" || selectedLevel !== "Tümü" || selectedStatus !== "Tümü" || searchTerm) && (
-              <button
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory("Tümü");
-                  setSelectedLevel("Tümü");
-                  setSelectedStatus("Tümü");
-                }}
-                className="px-3 py-3 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600/50 text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 rounded-2xl transition-all duration-200"
-                title="Filtreleri Temizle"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Sonuç Sayısı */}
-        <div className="mt-4 pt-4 border-t border-white/20 dark:border-gray-600/30">
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            <span className="font-medium">{filteredCourses.length}</span> ders bulundu
-          </p>
         </div>
       </div>
 
-      {/* Ders Kartları */}
-      {filteredCourses.length > 0 ? (
-        <div className={viewMode === "grid" 
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-          : "space-y-3"
-        }>
-          {filteredCourses.map((course, index) => (
-            viewMode === "grid" ? (
-              <CourseCard 
-                key={course.id} 
-                course={course} 
-                delay={index * 0.1}
+      {/* Search and Filters */}
+      <div className="w-full px-8 sm:px-12 lg:px-16 py-6 transition-all duration-300">
+        <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl border border-white/30 dark:border-gray-700/30 p-6 shadow-xl">
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Search Bar */}
+            <div className="relative flex-1 min-w-[400px]">
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Ders ara..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-14 pr-8 py-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg"
               />
-            ) : (
-              <CourseListItem 
-                key={course.id} 
-                course={course} 
-                delay={index * 0.1}
-              />
-            )
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white/10 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/30 p-12 text-center">
-          <div className="max-w-md mx-auto">
-            <Search className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Ders bulunamadı</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Arama kriterlerinize uygun ders bulunamadı. Filtreleri değiştirmeyi deneyin.
-            </p>
+            </div>
+
+            {/* Category Filter */}
+            <ModernSelect
+              options={categories.map(category => ({
+                value: category,
+                label: category === "Tümü" ? "Tüm Kategoriler" : category
+              }))}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              placeholder="Kategori Seçin"
+              className="min-w-[180px]"
+            />
+
+            {/* Level Filter */}
+            <ModernSelect
+              options={levels.map(level => ({
+                value: level,
+                label: level === "Tümü" ? "Tüm Seviyeler" : level
+              }))}
+              value={selectedLevel}
+              onChange={setSelectedLevel}
+              placeholder="Seviye Seçin"
+              className="min-w-[160px]"
+            />
+
+            {/* Status Filter */}
+            <ModernSelect
+              options={statuses.map(status => ({
+                value: status,
+                label: status === "Tümü" ? "Tüm Durumlar" : 
+                       status === "aktif" ? "Aktif" :
+                       status === "tamamlanan" ? "Tamamlanan" :
+                       status === "gelecek" ? "Gelecek" : status
+              }))}
+              value={selectedStatus}
+              onChange={setSelectedStatus}
+              placeholder="Durum Seçin"
+              className="min-w-[160px]"
+            />
+
+            {/* Clear Filters Button */}
             <button
               onClick={() => {
                 setSearchTerm("");
@@ -296,13 +226,53 @@ export default function CoursesPage() {
                 setSelectedLevel("Tümü");
                 setSelectedStatus("Tümü");
               }}
-              className="bg-primary-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-2xl hover:bg-primary-500 transition-all duration-300 border border-white/20 dark:border-gray-600/30 shadow-lg"
+              className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-2xl transition-all duration-200 font-medium"
             >
+              <X className="h-4 w-4" />
               Filtreleri Temizle
             </button>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Courses Grid */}
+      <div className="w-full px-8 sm:px-12 lg:px-16 pb-20 transition-all duration-300">
+        {filteredCourses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredCourses.map((course, index) => (
+              <CourseCard 
+                key={course.id} 
+                course={course} 
+                delay={index * 0.1}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <BookOpen className="h-20 w-20 text-gray-400 mx-auto mb-6" />
+            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
+              Ders bulunamadı
+            </h3>
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              Arama kriterlerinize uygun ders bulunamadı. Farklı filtreler deneyin.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Floating Notes Button */}
+      <button
+        onClick={() => setIsNotesSidebarOpen(true)}
+        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-110 active:scale-95 z-40 flex items-center justify-center group"
+      >
+        <StickyNote className="h-8 w-8 group-hover:rotate-12 transition-transform duration-300" />
+      </button>
+
+      {/* Notes Sidebar */}
+      <NotesSidebar
+        isOpen={isNotesSidebarOpen}
+        onClose={() => setIsNotesSidebarOpen(false)}
+      />
     </div>
   );
 }

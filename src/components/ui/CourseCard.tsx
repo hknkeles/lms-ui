@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Play, Clock, BookOpen, Award, Star, Users, Calendar, Heart } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, Clock, BookOpen, Award, Star, Users, Calendar, Heart, Plus, X, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
