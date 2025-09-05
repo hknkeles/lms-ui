@@ -286,68 +286,71 @@ export default function NotesSidebar({ isOpen, onClose, courseId, courseTitle }:
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed right-0 top-0 h-full w-[28rem] bg-white dark:bg-gray-900 shadow-2xl z-50 border-l border-gray-200 dark:border-gray-700"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            {/* Navbar */}
+            <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-gray-900 dark:text-white">Notlarım</h2>
+                    {courseTitle && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{courseTitle}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h2 className="font-semibold text-gray-900 dark:text-white">Notlarım</h2>
-                  {courseTitle && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{courseTitle}</p>
-                  )}
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-            </div>
-
-            {/* Search and Filters */}
-            <div className="p-4 space-y-3">
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  ref={searchRef}
-                  type="text"
-                  placeholder="Notlarda ara..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                </button>
               </div>
 
-              {/* Filter Tabs */}
-              <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-full">
-                {[
-                  { key: "all", label: "Tümü", icon: BookOpen },
-                  { key: "pinned", label: "Sabitlenen", icon: Pin },
-                  { key: "important", label: "Önemli", icon: Star },
-                  { key: "recent", label: "Son", icon: Clock }
-                ].map(({ key, label, icon: Icon }) => (
-                  <button
-                    key={key}
-                    onClick={() => setFilterType(key as any)}
-                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all flex-1 ${
-                      filterType === key
-                        ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
-                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                    }`}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    {label}
-                  </button>
-                ))}
+              {/* Search and Filters */}
+              <div className="px-4 pb-4 space-y-3">
+                {/* Search */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    ref={searchRef}
+                    type="text"
+                    placeholder="Notlarda ara..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Filter Tabs */}
+                <div className="flex gap-1 bg-gray-50 dark:bg-gray-800/50 p-1.5 rounded-xl w-full border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+                  {[
+                    { key: "all", label: "Tümü", icon: BookOpen },
+                    { key: "pinned", label: "Sabitlenen", icon: Pin },
+                    { key: "important", label: "Önemli", icon: Star },
+                    { key: "recent", label: "Son", icon: Clock }
+                  ].map(({ key, label, icon: Icon }) => (
+                    <button
+                      key={key}
+                      onClick={() => setFilterType(key as any)}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all flex-1 ${
+                        filterType === key
+                          ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
+                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                      }`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* New Note Button */}
-            <div className="px-4 pb-3">
+            <div className="px-4 py-3 bg-gray-50/50 dark:bg-gray-800/30 border-b border-gray-200/50 dark:border-gray-700/50">
               <button
                 onClick={() => setShowNewNoteModal(true)}
                 className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"

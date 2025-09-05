@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Clock, BookOpen, Award, Star, Users, Calendar, Heart, Plus, X, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import { createPortal } from "react-dom";
 
 interface Course {
@@ -30,7 +30,7 @@ interface CourseCardProps {
   delay?: number;
 }
 
-export default function CourseCard({ course, delay = 0 }: CourseCardProps) {
+const CourseCard = memo(function CourseCard({ course, delay = 0 }: CourseCardProps) {
   const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(course.isFavorite || false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -38,7 +38,8 @@ export default function CourseCard({ course, delay = 0 }: CourseCardProps) {
   const favoriteButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleContinue = () => {
-    router.push(`/courses/${course.slug}`);
+    // İlk dersi otomatik olarak aç
+    router.push(`/courses/${course.slug}/lesson`);
   };
 
   const handleFavorite = (e: React.MouseEvent) => {
@@ -240,20 +241,18 @@ export default function CourseCard({ course, delay = 0 }: CourseCardProps) {
         </div>
 
         {/* Course Info */}
-        <div className="p-4 relative z-10">
-          {/* Category and Duration */}
+        <div className="p-5 relative z-10">
+          {/* Category and Duration - Simplified */}
           <div className="flex items-center justify-between mb-4">
             {course.category && (
-              <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-2 rounded-full border border-white/20 dark:border-gray-600/30">
-                <BookOpen className="h-4 w-4 text-primary-400 dark:text-primary-300" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{course.category}</span>
-              </div>
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100/50 dark:bg-gray-700/30 px-2 py-1 rounded-md">
+                {course.category}
+              </span>
             )}
             {course.duration && (
-              <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-2 rounded-full border border-white/20 dark:border-gray-600/30">
-                <Clock className="h-4 w-4 text-primary-400 dark:text-primary-300" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{course.duration}</span>
-              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {course.duration}
+              </span>
             )}
           </div>
 
@@ -335,80 +334,41 @@ export default function CourseCard({ course, delay = 0 }: CourseCardProps) {
             </div>
           </div>
 
-          {/* Course Resources Stats */}
+          {/* Course Resources Stats - Simplified */}
           <div className="mb-4">
-            <div className="grid grid-cols-2 gap-3">
-              {/* Quiz Count */}
-              {course.quizCount !== undefined && (
-                <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/20 dark:border-gray-600/30">
-                  <div className="w-8 h-8 bg-purple-400/20 dark:bg-purple-500/20 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 dark:text-purple-400 text-sm font-bold">?</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Quiz</p>
-                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{course.quizCount}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Material Count */}
-              {course.materialCount !== undefined && (
-                <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/20 dark:border-gray-600/30">
-                  <div className="w-8 h-8 bg-blue-400/20 dark:bg-blue-500/20 rounded-lg flex items-center justify-center">
-                    <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Materyal</p>
-                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{course.materialCount}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Video Count */}
-              {course.videoCount !== undefined && (
-                <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/20 dark:border-gray-600/30">
-                  <div className="w-8 h-8 bg-red-400/20 dark:bg-red-500/20 rounded-lg flex items-center justify-center">
-                    <Play className="h-4 w-4 text-red-600 dark:text-red-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Video</p>
-                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{course.videoCount}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Live Session Count */}
-              {course.liveSessionCount !== undefined && (
-                <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-2 rounded-xl border border-white/20 dark:border-gray-600/30">
-                  <div className="w-8 h-8 bg-green-400/20 dark:bg-green-500/20 rounded-lg flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full animate-pulse"></div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Canlı</p>
-                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{course.liveSessionCount}</p>
-                  </div>
-                </div>
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-4">
+                {course.videoCount !== undefined && (
+                  <span className="flex items-center gap-1">
+                    <Play className="h-3 w-3" />
+                    {course.videoCount} video
+                  </span>
+                )}
+                {course.quizCount !== undefined && (
+                  <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+                    {course.quizCount} quiz
+                  </span>
+                )}
+              </div>
+              {course.liveSessionCount !== undefined && course.liveSessionCount > 0 && (
+                <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  {course.liveSessionCount} canlı
+                </span>
               )}
             </div>
           </div>
 
-          {/* Next Live Session Info */}
+          {/* Next Live Session Info - Simplified */}
           {course.nextLiveSession && (
-            <div className="mb-4 p-2 bg-gradient-to-r from-green-400/10 to-blue-400/10 dark:from-green-500/10 dark:to-blue-500/10 backdrop-blur-sm rounded-xl border border-green-300/20 dark:border-green-500/20">
+            <div className="mb-3 p-2 bg-green-50/50 dark:bg-green-900/20 rounded-lg border border-green-200/30 dark:border-green-700/30">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-green-600 dark:text-green-400" />
-                <div>
-                  <p className="text-xs text-green-600 dark:text-green-400 font-medium">Sonraki Canlı Ders</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-200">{course.nextLiveSession}</p>
-                </div>
+                <Calendar className="h-3 w-3 text-green-600 dark:text-green-400" />
+                <span className="text-xs text-green-700 dark:text-green-300 font-medium">
+                  Sonraki: {course.nextLiveSession}
+                </span>
               </div>
-            </div>
-          )}
-
-          {/* Last Updated Info */}
-          {course.lastUpdated && (
-            <div className="mb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-              Son güncelleme: {course.lastUpdated}
             </div>
           )}
 
@@ -447,5 +407,7 @@ export default function CourseCard({ course, delay = 0 }: CourseCardProps) {
       )}
     </>
   );
-}
+});
+
+export default CourseCard;
 

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback, memo } from "react";
 import CourseCard from "@/components/ui/CourseCard";
 import NotesSidebar from "@/components/ui/NotesSidebar";
-import { BookOpen, Plus, Search, Filter, StickyNote, X } from "lucide-react";
+import { BookOpen, Plus, Search, StickyNote, X } from "lucide-react";
 import ModernSelect from "@/components/ui/ModernSelect";
 
 // Mock data - gerçek uygulamada API'den gelecek
@@ -123,6 +123,24 @@ export default function CoursesPage() {
   const [selectedLevel, setSelectedLevel] = useState("Tümü");
   const [selectedStatus, setSelectedStatus] = useState("Tümü");
   const [isNotesSidebarOpen, setIsNotesSidebarOpen] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [visibleCourses, setVisibleCourses] = useState(12); // Initial load
+  // Load data from localStorage on mount
+  useEffect(() => {
+    const savedSearchHistory = localStorage.getItem('searchHistory');
+    
+    if (savedSearchHistory) setSearchHistory(JSON.parse(savedSearchHistory));
+  }, []);
+
+  // Save search to history - memoized
+  const handleSearch = useCallback((term: string) => {
+    setSearchTerm(term);
+    if (term.trim() && !searchHistory.includes(term.trim())) {
+      const newHistory = [term.trim(), ...searchHistory.slice(0, 9)]; // Keep last 10
+      setSearchHistory(newHistory);
+      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+    }
+  }, [searchHistory]);
 
   const filteredCourses = useMemo(() => {
     return courses.filter(course => {
@@ -136,89 +154,191 @@ export default function CoursesPage() {
     });
   }, [searchTerm, selectedCategory, selectedLevel, selectedStatus]);
 
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + K for search focus
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        searchInput?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Lazy loading with intersection observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCourses < filteredCourses.length) {
+          setVisibleCourses(prev => Math.min(prev + 8, filteredCourses.length));
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const loadMoreTrigger = document.getElementById('load-more-trigger');
+    if (loadMoreTrigger) {
+      observer.observe(loadMoreTrigger);
+    }
+
+    return () => {
+      if (loadMoreTrigger) {
+        observer.unobserve(loadMoreTrigger);
+      }
+    };
+  }, [visibleCourses, filteredCourses.length]);
+
   // Get unique categories and levels for filters
   const categories = ["Tümü", ...Array.from(new Set(courses.map(course => course.category).filter(Boolean)))];
   const levels = ["Tümü", ...Array.from(new Set(courses.map(course => course.level).filter(Boolean)))];
   const statuses = ["Tümü", "aktif", "tamamlanan", "gelecek"];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border-b border-white/30 dark:border-gray-700/30 sticky top-0 z-30 rounded-b-3xl">
-        <div className="w-full px-8 sm:px-12 lg:px-16 py-4 transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <div className="p-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl shadow-lg">
-                <BookOpen className="h-12 w-12 text-white" />
+    <div className="min-h-screen">
+      {/* Modern Navbar */}
+      <div className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+        <div className="px-6 py-4">
+          {/* Navbar Header */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h1 className="text-5xl font-bold text-gray-900 dark:text-white">Tüm Dersler</h1>
-                <p className="text-xl text-gray-600 dark:text-gray-400 mt-3">
-                  {filteredCourses.length} ders bulundu
-                </p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Derslerim</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Tüm derslerinizi buradan yönetin</p>
               </div>
             </div>
             
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                <Plus className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              </button>
+              <button 
+                onClick={() => setIsNotesSidebarOpen(true)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <StickyNote className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              </button>
+            </div>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="bg-gray-50/50 dark:bg-gray-800/30 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+            <div className="flex flex-wrap items-center gap-4">
+              {/* Search Bar */}
+              <div className="relative flex-1 min-w-[300px]">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Ders ara..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  list="search-history"
+                />
+                <datalist id="search-history">
+                  {searchHistory.map((term, index) => (
+                    <option key={index} value={term} />
+                  ))}
+                </datalist>
+              </div>
+
+              {/* Filters */}
+              <div className="flex items-center gap-3">
+                <ModernSelect
+                  options={categories.map(category => ({
+                    value: category,
+                    label: category === "Tümü" ? "Tüm Kategoriler" : category
+                  }))}
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  placeholder="Kategori"
+                  className="min-w-[140px]"
+                />
+
+                <ModernSelect
+                  options={levels.map(level => ({
+                    value: level,
+                    label: level === "Tümü" ? "Tüm Seviyeler" : level
+                  }))}
+                  value={selectedLevel}
+                  onChange={setSelectedLevel}
+                  placeholder="Seviye"
+                  className="min-w-[120px]"
+                />
+
+                <ModernSelect
+                  options={statuses.map(status => ({
+                    value: status,
+                    label: status === "Tümü" ? "Tüm Durumlar" : 
+                           status === "aktif" ? "Aktif" :
+                           status === "tamamlanan" ? "Tamamlanan" :
+                           status === "gelecek" ? "Gelecek" : status
+                  }))}
+                  value={selectedStatus}
+                  onChange={setSelectedStatus}
+                  placeholder="Durum"
+                  className="min-w-[120px]"
+                />
+
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("Tümü");
+                    setSelectedLevel("Tümü");
+                    setSelectedStatus("Tümü");
+                  }}
+                  className="flex items-center gap-2 px-3 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-lg transition-all duration-200 text-sm font-medium"
+                >
+                  <X className="h-4 w-4" />
+                  Temizle
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="w-full px-8 sm:px-12 lg:px-16 py-6 transition-all duration-300">
-        <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl border border-white/30 dark:border-gray-700/30 p-6 shadow-xl">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Search Bar */}
-            <div className="relative flex-1 min-w-[400px]">
-              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Ders ara..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-14 pr-8 py-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg"
+      {/* Courses Grid */}
+      <div className="px-6 py-6 pb-16">
+        {filteredCourses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredCourses.slice(0, visibleCourses).map((course, index) => (
+              <CourseCard 
+                key={course.id}
+                course={course} 
+                delay={index * 0.1}
               />
+            ))}
+            
+            {/* Load More Trigger */}
+            {visibleCourses < filteredCourses.length && (
+              <div id="load-more-trigger" className="col-span-full flex justify-center py-8">
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                  <div className="w-6 h-6 border-2 border-gray-300 dark:border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
+                  <span>Daha fazla yükleniyor...</span>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="h-12 w-12 text-gray-400" />
             </div>
-
-            {/* Category Filter */}
-            <ModernSelect
-              options={categories.map(category => ({
-                value: category,
-                label: category === "Tümü" ? "Tüm Kategoriler" : category
-              }))}
-              value={selectedCategory}
-              onChange={setSelectedCategory}
-              placeholder="Kategori Seçin"
-              className="min-w-[180px]"
-            />
-
-            {/* Level Filter */}
-            <ModernSelect
-              options={levels.map(level => ({
-                value: level,
-                label: level === "Tümü" ? "Tüm Seviyeler" : level
-              }))}
-              value={selectedLevel}
-              onChange={setSelectedLevel}
-              placeholder="Seviye Seçin"
-              className="min-w-[160px]"
-            />
-
-            {/* Status Filter */}
-            <ModernSelect
-              options={statuses.map(status => ({
-                value: status,
-                label: status === "Tümü" ? "Tüm Durumlar" : 
-                       status === "aktif" ? "Aktif" :
-                       status === "tamamlanan" ? "Tamamlanan" :
-                       status === "gelecek" ? "Gelecek" : status
-              }))}
-              value={selectedStatus}
-              onChange={setSelectedStatus}
-              placeholder="Durum Seçin"
-              className="min-w-[160px]"
-            />
-
-            {/* Clear Filters Button */}
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              Ders bulunamadı
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Arama kriterlerinize uygun ders bulunamadı.
+            </p>
             <button
               onClick={() => {
                 setSearchTerm("");
@@ -226,36 +346,10 @@ export default function CoursesPage() {
                 setSelectedLevel("Tümü");
                 setSelectedStatus("Tümü");
               }}
-              className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-2xl transition-all duration-200 font-medium"
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
-              <X className="h-4 w-4" />
-              Filtreleri Temizle
+              Filtreleri Sıfırla
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Courses Grid */}
-      <div className="w-full px-8 sm:px-12 lg:px-16 pb-20 transition-all duration-300">
-        {filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCourses.map((course, index) => (
-              <CourseCard 
-                key={course.id} 
-                course={course} 
-                delay={index * 0.1}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <BookOpen className="h-20 w-20 text-gray-400 mx-auto mb-6" />
-            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
-              Ders bulunamadı
-            </h3>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Arama kriterlerinize uygun ders bulunamadı. Farklı filtreler deneyin.
-            </p>
           </div>
         )}
       </div>
@@ -263,9 +357,9 @@ export default function CoursesPage() {
       {/* Floating Notes Button */}
       <button
         onClick={() => setIsNotesSidebarOpen(true)}
-        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-110 active:scale-95 z-40 flex items-center justify-center group"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 z-40 flex items-center justify-center group"
       >
-        <StickyNote className="h-8 w-8 group-hover:rotate-12 transition-transform duration-300" />
+        <StickyNote className="h-6 w-6 group-hover:rotate-12 transition-transform duration-300" />
       </button>
 
       {/* Notes Sidebar */}
