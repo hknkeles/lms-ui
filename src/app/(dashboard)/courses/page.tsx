@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback, memo } from "react";
 import CourseCard from "@/components/ui/CourseCard";
+import BehavioralScienceCard from "@/components/ui/BehavioralScienceCard";
 import NotesSidebar from "@/components/ui/NotesSidebar";
 import { BookOpen, Plus, Search, StickyNote, X } from "lucide-react";
 import ModernSelect from "@/components/ui/ModernSelect";
@@ -308,6 +309,18 @@ export default function CoursesPage() {
 
       {/* Courses Grid */}
       <div className="px-6 py-6 pb-16">
+        {/* Özel Davranış Bilimi Kartı */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Özel Tasarım Kartı
+          </h2>
+          <div className="flex justify-center">
+            <div className="w-full max-w-xs">
+              <BehavioralScienceCard />
+            </div>
+          </div>
+        </div>
+
         {filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredCourses.slice(0, visibleCourses).map((course, index) => (
