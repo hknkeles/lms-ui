@@ -29,7 +29,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Desktop'ta varsayılan olarak kapalı
   const pathname = usePathname();
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
@@ -60,25 +60,15 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       
       {/* Main content area */}
-      <div className="lg:ml-64 transition-all duration-300">
-        {/* Top bar for desktop */}
-        <div className="hidden lg:flex items-center justify-between h-16 bg-white border-b border-gray-200 px-6">
-          <h1 className="text-xl font-semibold text-gray-800">{pageTitle}</h1>
-          
-          {/* Theme toggle for desktop */}
-          <button className="p-2 rounded-md hover:bg-gray-100">
-            <svg className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          </button>
-        </div>
-        
+      <div className={`transition-all duration-300 ${
+        sidebarOpen ? 'lg:ml-[22rem]' : 'lg:ml-16'
+      }`}>
         {/* Content */}
-        <main className="p-6 lg:p-6 pt-24 lg:pt-6">
+        <main className="p-6 lg:p-6 pt-6 lg:pt-6 bg-gray-50 dark:bg-gray-900">
           {children}
         </main>
       </div>

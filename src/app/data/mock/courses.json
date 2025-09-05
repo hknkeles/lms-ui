@@ -1,7 +1,70 @@
 [
-    {"id":"c1","title":"Web Geliştirme 101","instructor":"Dr. Ayşe Yılmaz","progress":45,"coverUrl":"/images/course1.jpg"},
-    {"id":"c2","title":"Veri Yapıları ve Algoritmalar","instructor":"Prof. Mehmet Demir","progress":12,"coverUrl":"/images/course2.jpg"},
-    {"id":"c3","title":"Veritabanı Temelleri","instructor":"Ece Kaya","progress":78,"coverUrl":"/images/course3.jpg"}
-  ]
+  {
+    "id": "c1",
+    "title": "Web Geliştirme 101",
+    "instructor": "Dr. Ayşe Yılmaz",
+    "progress": 45,
+    "coverUrl": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=250&fit=crop&crop=center",
+    "category": "Bilgisayar",
+    "duration": "12 hafta",
+    "level": "Başlangıç",
+    "status": "aktif"
+  },
+  {
+    "id": "c2",
+    "title": "Veri Yapıları ve Algoritmalar",
+    "instructor": "Prof. Mehmet Demir",
+    "progress": 12,
+    "coverUrl": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&h=250&fit=crop&crop=center",
+    "category": "Bilgisayar",
+    "duration": "16 hafta",
+    "level": "Orta",
+    "status": "aktif"
+  },
+  {
+    "id": "c3",
+    "title": "Veritabanı Temelleri",
+    "instructor": "Ece Kaya",
+    "progress": 78,
+    "coverUrl": "https://images.unsplash.com/photo-1544383835-bda2bc66a6d3?w=400&h=250&fit=crop&crop=center",
+    "category": "Bilgisayar",
+    "duration": "14 hafta",
+    "level": "Başlangıç",
+    "status": "aktif"
+  },
+  {
+    "id": "c4",
+    "title": "Matematik 101",
+    "instructor": "Prof. Dr. Ahmet Yılmaz",
+    "progress": 75,
+    "coverUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=250&fit=crop&crop=center",
+    "category": "Matematik",
+    "duration": "15 hafta",
+    "level": "Başlangıç",
+    "status": "aktif"
+  },
+  {
+    "id": "c5",
+    "title": "İngilizce Kompozisyon",
+    "instructor": "Dr. Sarah Johnson",
+    "progress": 60,
+    "coverUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=250&fit=crop&crop=center",
+    "category": "Dil",
+    "duration": "10 hafta",
+    "level": "Orta",
+    "status": "aktif"
+  },
+  {
+    "id": "c6",
+    "title": "Bilgisayar Programlama",
+    "instructor": "Prof. Dr. Mehmet Kaya",
+    "progress": 90,
+    "coverUrl": "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=250&fit=crop&crop=center",
+    "category": "Bilgisayar",
+    "duration": "18 hafta",
+    "level": "İleri",
+    "status": "tamamlanan"
+  }
+]
   
   
