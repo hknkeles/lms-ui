@@ -1,0 +1,111 @@
+{
+  "quiz": {
+    "id": "quiz-1",
+    "title": "Örnek Sınav 2024_İşletme",
+    "instructor": "Ayşe Demir",
+    "instructorAvatar": "AD",
+    "totalQuestions": 7,
+    "timeLimit": 60,
+    "currentQuestion": 2,
+    "questions": [
+      {
+        "id": 1,
+        "type": "multiple-choice",
+        "question": "Aşağıdaki senaryolardan hangisi bir ülkenin para biriminin değerinin yükselmesine neden olabilir?",
+        "options": [
+          "İthalatın artması",
+          "İhracatın azalması", 
+          "Faiz oranlarının yükselmesi",
+          "Siyasi istikrarsızlık"
+        ],
+        "correctAnswer": 2,
+        "userAnswer": 2,
+        "isAnswered": true
+      },
+      {
+        "id": 2,
+        "type": "true-false",
+        "question": "Ticaret fazlası olan bir ülkenin olumlu bir ticaret konumuna sahip olduğu söylenir.",
+        "options": ["DOĞRU", "YANLIŞ"],
+        "correctAnswer": 0,
+        "userAnswer": null,
+        "isAnswered": false,
+        "image": "/api/placeholder/600/300"
+      },
+      {
+        "id": 3,
+        "type": "multiple-choice",
+        "question": "Uygulama içindeki hangi kullanıcı eylemleri veya etkileşimlerinin dijital ayak izi olmasını bekliyorsunuz?",
+        "options": [
+          "Giriş denemeleri",
+          "Sayfa görüntülemeleri",
+          "Form gönderimleri",
+          "Yukarıdakilerin hepsi"
+        ],
+        "correctAnswer": 3,
+        "userAnswer": null,
+        "isAnswered": false
+      },
+      {
+        "id": 4,
+        "type": "poll",
+        "question": "Tercih ettiğiniz öğrenme yöntemi nedir?",
+        "options": [
+          "Video dersleri",
+          "Okuma materyalleri",
+          "İnteraktif alıştırmalar",
+          "Grup tartışmaları"
+        ],
+        "userAnswer": null,
+        "isAnswered": false
+      },
+      {
+        "id": 5,
+        "type": "reorder",
+        "question": "İş planlama sürecindeki aşağıdaki adımları doğru sıraya koyun:",
+        "options": [
+          "Pazar Araştırması",
+          "Finansal Planlama",
+          "Strateji Geliştirme",
+          "Uygulama"
+        ],
+        "correctOrder": [0, 2, 1, 3],
+        "userAnswer": null,
+        "isAnswered": false
+      },
+      {
+        "id": 6,
+        "type": "matching",
+        "question": "Aşağıdaki işletme terimlerini tanımlarıyla eşleştirin:",
+        "options": [
+          "ROI",
+          "SWOT",
+          "KPI",
+          "CRM"
+        ],
+        "matches": [
+          "Yatırım Getirisi",
+          "Güçlü Yönler, Zayıf Yönler, Fırsatlar, Tehditler",
+          "Anahtar Performans Göstergesi", 
+          "Müşteri İlişkileri Yönetimi"
+        ],
+        "userAnswer": null,
+        "isAnswered": false
+      },
+      {
+        "id": 7,
+        "type": "multiple-choice",
+        "question": "Modern işletme yönetiminde dijital dönüşüm süreçlerinin başarılı bir şekilde uygulanması için aşağıdaki faktörlerden hangisi en kritik öneme sahiptir? Bu süreçte teknolojik altyapının kurulması, çalışan eğitimlerinin verilmesi, organizasyonel değişim yönetiminin sağlanması ve müşteri deneyiminin iyileştirilmesi gibi birçok unsur birlikte değerlendirilmelidir. Ayrıca, süreç optimizasyonu, veri analitiği kullanımı, bulut bilişim teknolojilerinin entegrasyonu ve siber güvenlik önlemlerinin alınması da bu dönüşümün başarısını etkileyen önemli faktörlerdir.",
+        "options": [
+          "Sadece en son teknolojilerin satın alınması ve kurulması, çünkü modern teknoloji olmadan dijital dönüşüm mümkün değildir ve şirketlerin rekabetçi kalabilmesi için mutlaka en güncel yazılım ve donanım çözümlerine yatırım yapması gerekmektedir.",
+          "Çalışanların dijital okuryazarlık seviyelerinin artırılması ve sürekli eğitim programlarının uygulanması, çünkü teknoloji ne kadar gelişmiş olursa olsun, insan faktörü olmadan başarılı bir dijital dönüşüm gerçekleştirilemez ve çalışanların adaptasyonu kritik öneme sahiptir.",
+          "Organizasyonel kültürün değiştirilmesi ve liderlik desteğinin sağlanması, çünkü dijital dönüşüm sadece teknolojik bir değişim değil, aynı zamanda iş yapış şekillerinin, süreçlerin ve zihniyetin köklü bir şekilde değişmesini gerektiren kapsamlı bir organizasyonel dönüşüm sürecidir.",
+          "Müşteri geri bildirimlerinin sürekli toplanması ve analiz edilmesi, çünkü dijital dönüşümün nihai amacı müşteri deneyimini iyileştirmek ve müşteri memnuniyetini artırmaktır, bu nedenle müşteri odaklı yaklaşım en önemli faktördür."
+        ],
+        "correctAnswer": 2,
+        "userAnswer": null,
+        "isAnswered": false
+      }
+    ]
+  }
+}
