@@ -13,6 +13,8 @@ const getPageTitle = (pathname: string) => {
       return "Dashboard";
     case "/courses":
       return "Derslerim";
+    case "/schedule":
+      return "Ders Programı";
     case "/assignments":
       return "Ödevler";
     case "/grades":
@@ -71,7 +73,7 @@ function DashboardLayoutContent({
       }`}>
         {/* Content */}
         <ScrollArea className="flex-1">
-          <main className="p-8 lg:p-10 pt-8 lg:pt-10 bg-gray-50 dark:bg-gray-900">
+          <main className="bg-gray-50 dark:bg-gray-900">
             {children}
           </main>
         </ScrollArea>

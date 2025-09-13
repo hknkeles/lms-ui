@@ -72,7 +72,7 @@ const menuCategories = [
     color: "text-green-600",
     items: [
       { label: "Tüm Derslerim", href: "/courses", description: "Aktif dersler", icon: BookOpenCheck },
-      { label: "Ders Programı", href: "/courses/schedule", description: "Haftalık program", icon: CalendarDays },
+      { label: "Ders Programı", href: "/schedule", description: "Haftalık program", icon: CalendarDays },
       { label: "Ders Materyalleri", href: "/courses/materials", description: "PDF, video, linkler", icon: FolderOpen }
     ]
   },
@@ -175,12 +175,17 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     );
   };
 
-  // Select category and open sidebar
+  // Select category and toggle sidebar
   const selectCategory = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-    // Sidebar kapalıysa otomatik aç
-    if (!isOpen) {
+    // Eğer aynı kategori seçiliyorsa sidebar'ı kapat
+    if (selectedCategory === categoryId && isOpen) {
       onToggle();
+    } else {
+      // Farklı kategori seçiliyorsa kategoriyi değiştir ve sidebar'ı aç
+      setSelectedCategory(categoryId);
+      if (!isOpen) {
+        onToggle();
+      }
     }
   };
 

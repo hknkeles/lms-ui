@@ -400,4 +400,3 @@ const CourseCard = function CourseCard({ course, delay = 0, onToggleFavorite }: 
 };
 
 export default CourseCard;
-
