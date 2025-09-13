@@ -62,7 +62,7 @@ const menuCategories = [
     label: "Dashboard",
     color: "text-blue-600",
     items: [
-      { label: "Genel Bakış", href: "/dashboard", description: "Ana sayfa", icon: Home }
+      { label: "Genel Bakış", href: "/", description: "Ana sayfa", icon: Home }
     ]
   },
   {

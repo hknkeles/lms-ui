@@ -3,20 +3,17 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import DashboardPage from "./(dashboard)/page";
+import DashboardLayout from "./(dashboard)/layout";
 
 export default function HomePage() {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading) {
-      if (isAuthenticated()) {
-        // Kullanıcı giriş yapmışsa dashboard'a yönlendir
-        router.push("/dashboard");
-      } else {
-        // Kullanıcı giriş yapmamışsa login'e yönlendir
-        router.push("/login");
-      }
+    if (!isLoading && !isAuthenticated()) {
+      // Kullanıcı giriş yapmamışsa login'e yönlendir
+      router.push("/login");
     }
   }, [isLoading, isAuthenticated, router]);
 
@@ -32,5 +29,15 @@ export default function HomePage() {
     );
   }
 
-  return null;
+  // Authenticated değilse hiçbir şey render etme (redirect olacak)
+  if (!isAuthenticated()) {
+    return null;
+  }
+
+  // Authenticated ise dashboard'ı layout ile birlikte göster
+  return (
+    <DashboardLayout>
+      <DashboardPage />
+    </DashboardLayout>
+  );
 }

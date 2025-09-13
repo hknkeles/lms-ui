@@ -39,7 +39,7 @@ export default function LoginPage() {
       
       if (result.success) {
         // Başarılı giriş - dashboard'a yönlendir
-        router.push("/dashboard");
+        router.push("/");
       } else {
         // Hata mesajını göster
         setError("root", {

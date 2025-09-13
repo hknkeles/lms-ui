@@ -73,8 +73,10 @@ function DashboardLayoutContent({
       }`}>
         {/* Content */}
         <ScrollArea className="flex-1">
-          <main className="bg-gray-50 dark:bg-gray-900">
-            {children}
+          <main className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+            <div className="p-4 lg:p-6">
+              {children}
+            </div>
           </main>
         </ScrollArea>
       </div>
