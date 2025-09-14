@@ -1,0 +1,132 @@
+export interface Message {
+  id: string;
+  from: string;
+  fromRole: string;
+  fromAvatar: string;
+  to: string;
+  subject: string;
+  content: string;
+  date: string;
+  isRead: boolean;
+  priority: "high" | "medium" | "low";
+  category: string;
+  attachments?: Array<{
+    name: string;
+    type: string;
+    size: string;
+  }>;
+}
+
+export const messages: Message[] = [
+  {
+    id: "m1",
+    from: "Prof. Dr. Ahmet Yılmaz",
+    fromRole: "Öğretim Üyesi",
+    fromAvatar: "AY",
+    to: "student",
+    subject: "Final Projesi Hakkında",
+    content: "Merhaba Merve, final projeni inceledim. Çok güzel bir çalışma olmuş. Sadece birkaç küçük düzeltme yapman gerekiyor. Özellikle metodoloji bölümünde daha detaylı açıklamalar ekleyebilirsin.",
+    date: "2025-01-15T14:30:00Z",
+    isRead: false,
+    priority: "high",
+    category: "academic",
+    attachments: [
+      {
+        name: "proje_geribildirim.pdf",
+        type: "pdf",
+        size: "2.3 MB"
+      }
+    ]
+  },
+  {
+    id: "m2",
+    from: "Dr. Sarah Johnson",
+    fromRole: "Doçent",
+    fromAvatar: "SJ",
+    to: "student",
+    subject: "Essay Değerlendirmesi",
+    content: "Essay'ini aldım. Çok iyi yazılmış! Sadece birkaç gramer hatası var, onları düzeltebilirsin. Genel olarak argümanların çok güçlü ve destekleyici kanıtların etkileyici.",
+    date: "2025-01-14T09:15:00Z",
+    isRead: true,
+    priority: "medium",
+    category: "academic"
+  },
+  {
+    id: "m3",
+    from: "Prof. Dr. Mehmet Kaya",
+    fromRole: "Profesör",
+    fromAvatar: "MK",
+    to: "student",
+    subject: "Programlama Ödevi",
+    content: "Programlama ödevini başarıyla tamamladın. Tebrikler! Kod kaliten çok yüksek ve algoritma yaklaşımın çok etkili. Bu seviyede devam etmeni öneriyorum.",
+    date: "2025-01-12T16:45:00Z",
+    isRead: true,
+    priority: "low",
+    category: "academic"
+  },
+  {
+    id: "m4",
+    from: "Dr. Elif Demir",
+    fromRole: "Öğretim Üyesi",
+    fromAvatar: "ED",
+    to: "student",
+    subject: "Sınav Sonuçları",
+    content: "Vize sınavının sonuçları açıklandı. 85 puan aldın, bu çok iyi bir sonuç! Sınıf ortalaması 72 puan. Final sınavında da aynı performansı göstermeni bekliyorum.",
+    date: "2025-01-10T11:20:00Z",
+    isRead: true,
+    priority: "high",
+    category: "grades"
+  },
+  {
+    id: "m5",
+    from: "Dr. Can Özkan",
+    fromRole: "Öğretim Üyesi",
+    fromAvatar: "CO",
+    to: "student",
+    subject: "Proje Sunumu Tarihi",
+    content: "Proje sunumunuz 25 Ocak'ta saat 14:00'te yapılacak. Sunum süreniz 15 dakika olacak ve 5 dakika soru-cevap bölümü olacak. Sunum dosyanızı en geç 23 Ocak'a kadar göndermeniz gerekiyor.",
+    date: "2025-01-08T13:30:00Z",
+    isRead: false,
+    priority: "high",
+    category: "schedule"
+  },
+  {
+    id: "m6",
+    from: "Dr. Zeynep Arslan",
+    fromRole: "Doçent",
+    fromAvatar: "ZA",
+    to: "student",
+    subject: "Araştırma Önerisi",
+    content: "Yüksek lisans tez konun hakkında konuşmak istiyorum. Önerdiğin konu çok ilginç ve güncel. Bu hafta içinde bir randevu ayarlayalım mı?",
+    date: "2025-01-05T10:00:00Z",
+    isRead: true,
+    priority: "medium",
+    category: "academic"
+  },
+  {
+    id: "m7",
+    from: "Dr. Murat Şahin",
+    fromRole: "Öğretim Üyesi",
+    fromAvatar: "MS",
+    to: "student",
+    subject: "Staj Başvurusu",
+    content: "Yaz stajı başvurunuz değerlendirildi. Şirketle görüşme tarihiniz 20 Ocak'ta saat 10:00'da. Hazırlık yapmanız için gerekli dokümanları e-postanıza gönderdim.",
+    date: "2025-01-03T15:45:00Z",
+    isRead: false,
+    priority: "high",
+    category: "career"
+  },
+  {
+    id: "m8",
+    from: "Dr. Ayşe Kaya",
+    fromRole: "Profesör",
+    fromAvatar: "AK",
+    to: "student",
+    subject: "Ders Materyali Güncellemesi",
+    content: "Bu hafta işleyeceğimiz konu için yeni bir makale ekledim. Ders öncesi okumanızı öneriyorum. Ayrıca geçen hafta işlediğimiz konularla ilgili ek kaynaklar da paylaştım.",
+    date: "2025-01-01T08:30:00Z",
+    isRead: true,
+    priority: "low",
+    category: "academic"
+  }
+];
