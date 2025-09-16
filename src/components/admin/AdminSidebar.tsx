@@ -6,18 +6,23 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  BookOpenCheck,
-  FileText,
-  GraduationCap,
-  MessageSquare,
+  BookOpen,
   Megaphone,
-  CalendarDays,
   Settings,
   ChevronRight,
+  ChevronDown,
   LogOut,
   User as UserIcon,
+  UserCheck,
+  UserPlus,
+  GraduationCap,
+  UserCog,
+  Sun,
+  Moon,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -28,7 +33,13 @@ type AdminCategory = {
   id: string;
   icon: any;
   label: string;
-  items: Array<{ label: string; href: string; icon?: any; description?: string }>;
+  items: Array<{ 
+    label: string; 
+    href: string; 
+    icon?: any; 
+    description?: string;
+    subItems?: Array<{ label: string; href: string; icon?: any; description?: string }>;
+  }>;
 };
 
 const adminCategories: AdminCategory[] = [
@@ -41,32 +52,61 @@ const adminCategories: AdminCategory[] = [
     ],
   },
   {
-    id: "academics",
-    icon: BookOpenCheck,
-    label: "Akademik",
+    id: "courses",
+    icon: BookOpen,
+    label: "Kurslar",
     items: [
-      { label: "Kullanıcılar", href: "/admin/users", icon: Users, description: "Öğrenci/öğretmen" },
-      { label: "Dersler", href: "/admin/courses", icon: BookOpenCheck, description: "Ders yönetimi" },
-      { label: "Program", href: "/admin/schedule", icon: CalendarDays, description: "Ders programı" },
+      { label: "Tüm Kurslar", href: "/admin/courses", icon: BookOpen, description: "Kurs listesi" },
+      { label: "Kurs Oluştur", href: "/admin/courses/create", icon: BookOpen, description: "Yeni kurs ekle" },
+      { label: "Kurs Kategorileri", href: "/admin/courses/categories", icon: BookOpen, description: "Kategori yönetimi" },
     ],
   },
   {
-    id: "learning",
-    icon: FileText,
-    label: "Öğrenme",
+    id: "users",
+    icon: Users,
+    label: "Kullanıcılar",
     items: [
-      { label: "Ödevler", href: "/admin/assignments", icon: FileText, description: "Ödev ve teslim" },
-      { label: "Notlar", href: "/admin/grades", icon: GraduationCap, description: "Değerlendirme" },
+      { label: "Tüm Kullanıcılar", href: "/admin/users", icon: Users, description: "Kullanıcı listesi" },
+      { 
+        label: "Yöneticiler", 
+        href: "/admin/users?role=admin", 
+        icon: UserCog, 
+        description: "Yönetici listesi",
+        subItems: [
+          { label: "Yöneticileri Yönet", href: "/admin/users?role=admin", icon: UserCheck, description: "Yönetici yönetimi" },
+          { label: "Yönetici Ekle", href: "/admin/managers/add", icon: UserPlus, description: "Yeni yönetici ekle" }
+        ]
+      },
+      { 
+        label: "Eğitmenler", 
+        href: "/admin/users?role=teacher", 
+        icon: GraduationCap, 
+        description: "Eğitmen listesi",
+        subItems: [
+          { label: "Eğitmenleri Yönet", href: "/admin/users/teachers", icon: UserCheck, description: "Eğitmen yönetimi" },
+          { label: "Yeni Eğitmen Ekle", href: "/admin/users/teachers/create", icon: UserPlus, description: "Yeni eğitmen ekle" }
+        ]
+      },
+      { 
+        label: "Öğrenciler", 
+        href: "/admin/users?role=student", 
+        icon: UserIcon, 
+        description: "Öğrenci listesi",
+        subItems: [
+          { label: "Öğrencileri Yönet", href: "/admin/users/students", icon: UserCheck, description: "Öğrenci yönetimi" },
+          { label: "Yeni Öğrenci Ekle", href: "/admin/users/students/create", icon: UserPlus, description: "Yeni öğrenci ekle" }
+        ]
+      },
     ],
   },
   {
-    id: "communication",
-    icon: MessageSquare,
-    label: "İletişim",
+    id: "announcements",
+    icon: Megaphone,
+    label: "Duyurular",
     items: [
-      { label: "Mesajlar", href: "/admin/messages", icon: MessageSquare, description: "Gelen kutusu" },
-      { label: "Duyurular", href: "/admin/announcements", icon: Megaphone, description: "Duyuru yönetimi" },
-      { label: "Forum", href: "/admin/forum", icon: MessageSquare, description: "Topluluk" },
+      { label: "Tüm Duyurular", href: "/admin/announcements", icon: Megaphone, description: "Duyuru listesi" },
+      { label: "Yeni Duyuru", href: "/admin/announcements/create", icon: Megaphone, description: "Duyuru oluştur" },
+      { label: "Duyuru Kategorileri", href: "/admin/announcements/categories", icon: Megaphone, description: "Kategori yönetimi" },
     ],
   },
   {
@@ -74,7 +114,9 @@ const adminCategories: AdminCategory[] = [
     icon: Settings,
     label: "Ayarlar",
     items: [
-      { label: "Genel Ayarlar", href: "/admin/settings", icon: Settings, description: "Platform" },
+      { label: "Genel Ayarlar", href: "/admin/settings", icon: Settings, description: "Platform ayarları" },
+      { label: "Sistem Ayarları", href: "/admin/settings/system", icon: Settings, description: "Sistem konfigürasyonu" },
+      { label: "Güvenlik", href: "/admin/settings/security", icon: Settings, description: "Güvenlik ayarları" },
     ],
   },
 ];
@@ -83,12 +125,61 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>(adminCategories[0].id);
-  useEffect(() => setMounted(true), []);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const [isDark, setIsDark] = useState(false);
   const { user, logout } = useAuth();
 
+  useEffect(() => setMounted(true), []);
+
+  // Dark mode toggle function
+  const toggleDarkMode = () => {
+    const newMode = !isDark;
+    setIsDark(newMode);
+    localStorage.setItem('lms_theme', newMode ? 'dark' : 'light');
+    
+    // Apply theme to document
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
+  // Initialize theme from localStorage
   useEffect(() => {
-    const current = adminCategories.find(cat => pathname.startsWith(`/admin`) && cat.items.some(i => pathname.startsWith(i.href)));
-    if (current) setSelectedCategory(current.id);
+    const savedTheme = localStorage.getItem('lms_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    const isDarkMode = theme === 'dark';
+    
+    setIsDark(isDarkMode);
+    
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  // Auto-select category based on current path
+  useEffect(() => {
+    const currentCategory = adminCategories.find(cat => 
+      cat.items.some(item => {
+        // Exact match for root paths
+        if (item.href === pathname) return true;
+        // Match for sub-paths but avoid false matches
+        if (item.href !== '/admin' && (pathname.startsWith(item.href + '/') || pathname.startsWith(item.href + '?'))) {
+          return true;
+        }
+        return false;
+      })
+    );
+    
+    if (currentCategory) {
+      setSelectedCategory(currentCategory.id);
+    }
   }, [pathname]);
 
   const selectCategory = (categoryId: string) => {
@@ -100,16 +191,16 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
     }
   };
 
-  useEffect(() => {
-    const current = adminCategories.find(cat => pathname.startsWith(`/admin`) && cat.items.some(i => pathname.startsWith(i.href)));
-    if (current) {
-      setSelectedCategory(current.id);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  const toggleSubMenu = (itemLabel: string) => {
+    setExpandedItems(prev => 
+      prev.includes(itemLabel) 
+        ? prev.filter(label => label !== itemLabel)
+        : [...prev, itemLabel]
+    );
+  };
 
   return (
-    <div className="fixed left-0 top-0 h-full z-50">
+    <>
       {/* Mobile overlay - sadece detaylı sidebar açıkken, ikon rayı sabit */}
       {isOpen && (
         <div
@@ -118,8 +209,8 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
         />
       )}
       {/* Minimal icon rail */}
-      <div className="w-16 h-full bg-white dark:bg-gray-900 border-r border-gray-200/60 dark:border-gray-700/60 flex flex-col items-center py-4 shadow-lg">
-        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg mb-6">
+      <div className="fixed left-0 top-0 h-full w-16 z-50 bg-white dark:bg-gray-900 border-r border-gray-200/60 dark:border-gray-700/60 flex flex-col items-center py-4 shadow-lg">
+        <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg mb-6">
           <span className="text-white font-bold text-lg">A</span>
         </div>
         <nav className="flex-1 space-y-2">
@@ -129,51 +220,247 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
               <button
                 key={cat.id}
                 onClick={() => selectCategory(cat.id)}
-                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${isActive ? "bg-primary-100 dark:bg-primary-800 text-primary-600 dark:text-primary-400 shadow-lg" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400"}`}
+                onMouseEnter={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const tooltipWidth = 200;
+                  const tooltipHeight = 40;
+                  
+                  let x = rect.right + 12;
+                  let y = rect.top + rect.height / 2;
+                  
+                  if (x + tooltipWidth > window.innerWidth) {
+                    x = rect.left - tooltipWidth - 12;
+                  }
+                  
+                  if (y - tooltipHeight / 2 < 0) {
+                    y = tooltipHeight / 2 + 10;
+                  }
+                  
+                  if (y + tooltipHeight / 2 > window.innerHeight) {
+                    y = window.innerHeight - tooltipHeight / 2 - 10;
+                  }
+                  
+                  setTooltip({
+                    text: cat.label,
+                    x: x,
+                    y: y
+                  });
+                }}
+                onMouseLeave={() => setTooltip(null)}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group ${isActive ? "bg-primary/10 dark:bg-primary/20 text-primary shadow-lg" : "text-gray-600 dark:text-gray-400 hover:bg-primary/5 dark:hover:bg-primary/10 hover:text-primary"}`}
               >
                 <cat.icon className="h-5 w-5" />
               </button>
             );
           })}
         </nav>
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={toggleDarkMode}
+          onMouseEnter={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const tooltipWidth = 200;
+            const tooltipHeight = 40;
+            
+            let x = rect.right + 12;
+            let y = rect.top + rect.height / 2;
+            
+            if (x + tooltipWidth > window.innerWidth) {
+              x = rect.left - tooltipWidth - 12;
+            }
+            
+            if (y - tooltipHeight / 2 < 0) {
+              y = tooltipHeight / 2 + 10;
+            }
+            
+            if (y + tooltipHeight / 2 > window.innerHeight) {
+              y = window.innerHeight - tooltipHeight / 2 - 10;
+            }
+            
+            setTooltip({
+              text: isDark ? "Light mode'a geç" : "Dark mode'a geç",
+              x: x,
+              y: y
+            });
+          }}
+          onMouseLeave={() => setTooltip(null)}
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-primary/5 dark:hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
+        >
+          {isDark ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
+        </button>
+
         <button
           onClick={onToggle}
+          onMouseEnter={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const tooltipWidth = 200;
+            const tooltipHeight = 40;
+            
+            let x = rect.right + 12;
+            let y = rect.top + rect.height / 2;
+            
+            if (x + tooltipWidth > window.innerWidth) {
+              x = rect.left - tooltipWidth - 12;
+            }
+            
+            if (y - tooltipHeight / 2 < 0) {
+              y = tooltipHeight / 2 + 10;
+            }
+            
+            if (y + tooltipHeight / 2 > window.innerHeight) {
+              y = window.innerHeight - tooltipHeight / 2 - 10;
+            }
+            
+            setTooltip({
+              text: isOpen ? "Detaylı sidebar'ı kapat" : "Detaylı sidebar'ı aç",
+              x: x,
+              y: y
+            });
+          }}
+          onMouseLeave={() => setTooltip(null)}
           aria-label={isOpen ? "Detaylı sidebar'ı kapat" : "Detaylı sidebar'ı aç"}
-          className="w-12 h-12 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-primary/5 dark:hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
         >
           <ChevronRight className={`h-5 w-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
       </div>
 
       {/* Detail panel */}
-      <div className={`fixed left-16 top-0 h-full w-72 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-r border-gray-200/60 dark:border-gray-700/60 transform transition-all duration-300 shadow-xl ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <div className={`fixed left-16 top-0 h-full w-72 z-60 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-r border-gray-200/60 dark:border-gray-700/60 transform transition-all duration-300 ease-in-out shadow-xl flex flex-col ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6 border-b border-gray-200/60 dark:border-gray-700/60">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             {adminCategories.find(c => c.id === selectedCategory)?.label}
           </h1>
           <p className="text-xs text-gray-500 dark:text-gray-400">Yönetim Paneli</p>
         </div>
-        <nav className="p-3 space-y-1">
-          {adminCategories.find(c => c.id === selectedCategory)?.items.map((item) => {
-            const isActive = mounted && (pathname === item.href || pathname.startsWith(item.href + "/"));
+        <ScrollArea className="flex-1">
+          <nav className="p-3 space-y-1">
+            {adminCategories.find(c => c.id === selectedCategory)?.items.map((item) => {
+            // Improved active state detection
+            const isActive = mounted && (
+              pathname === item.href || 
+              pathname.startsWith(item.href + '/') || 
+              pathname.startsWith(item.href + '?')
+            );
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            const isExpanded = expandedItems.includes(item.label);
+            
             return (
-              <Link key={item.href} href={item.href} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? "bg-primary-50/80 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border border-primary-200/50 dark:border-primary-700/50" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50/80 dark:hover:bg-gray-800/50 hover:text-primary-600 dark:hover:text-primary-400 hover:border hover:border-gray-200/50 dark:hover:border-gray-700/50"}`}>
-                {item.icon && <item.icon className={`h-4 w-4 ${isActive ? "text-primary-600 dark:text-primary-400" : "text-gray-600 dark:text-gray-400"}`} />}
-                <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-sm">{item.label}</span>
-                  {item.description && <p className="text-xs mt-0.5 text-gray-500 dark:text-gray-400 truncate">{item.description}</p>}
+              <div key={item.href}>
+                <div className="flex items-center">
+                  {hasSubItems ? (
+                    <button
+                      onClick={() => toggleSubMenu(item.label)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 flex-1 w-full ${
+                        isActive 
+                          ? "bg-primary/5 dark:bg-primary/10 text-primary border border-primary/20 dark:border-primary/30" 
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50/80 dark:hover:bg-gray-800/50 hover:text-primary hover:border hover:border-gray-200/50 dark:hover:border-gray-700/50"
+                      }`}
+                    >
+                      {item.icon && (
+                        <item.icon className={`h-4 w-4 ${isActive ? "text-primary" : "text-gray-600 dark:text-gray-400"}`} />
+                      )}
+                      <div className="flex-1 min-w-0 text-left">
+                        <span className="font-semibold text-sm">{item.label}</span>
+                        {item.description && (
+                          <p className="text-xs mt-0.5 text-gray-500 dark:text-gray-400 truncate">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                      <ChevronDown className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                      {isActive && <div className="w-1.5 h-1.5 bg-primary/80 rounded-full" />}
+                    </button>
+                  ) : (
+                    <Link 
+                      href={item.href} 
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 flex-1 ${
+                        isActive 
+                          ? "bg-primary/5 dark:bg-primary/10 text-primary border border-primary/20 dark:border-primary/30" 
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50/80 dark:hover:bg-gray-800/50 hover:text-primary hover:border hover:border-gray-200/50 dark:hover:border-gray-700/50"
+                      }`}
+                    >
+                      {item.icon && (
+                        <item.icon className={`h-4 w-4 ${isActive ? "text-primary" : "text-gray-600 dark:text-gray-400"}`} />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <span className="font-semibold text-sm">{item.label}</span>
+                        {item.description && (
+                          <p className="text-xs mt-0.5 text-gray-500 dark:text-gray-400 truncate">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                      {isActive && <div className="w-1.5 h-1.5 bg-primary/80 rounded-full" />}
+                    </Link>
+                  )}
                 </div>
-                {isActive && <div className="w-1.5 h-1.5 bg-primary-500/80 dark:bg-primary-400/80 rounded-full" />}
-              </Link>
+                
+                {/* Sub Items */}
+                {hasSubItems && isExpanded && (
+                  <div className="relative ml-6 mt-1">
+                    {/* Main vertical line */}
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary/30 dark:bg-primary/40"></div>
+                    
+                    <div className="space-y-1">
+                      {item.subItems!.map((subItem, index) => {
+                        const isSubActive = mounted && (
+                          pathname === subItem.href || 
+                          pathname.startsWith(subItem.href + '/') || 
+                          pathname.startsWith(subItem.href + '?')
+                        );
+                        
+                        return (
+                          <div key={subItem.href} className="relative">
+                            {/* Horizontal connector line */}
+                            <div className={`absolute left-0 top-1/2 w-4 h-0.5 transform -translate-y-1/2 ${
+                              isSubActive 
+                                ? "bg-primary shadow-sm shadow-primary/30" 
+                                : "bg-primary/40 dark:bg-primary/50"
+                            }`}></div>
+                            
+                            <Link 
+                              href={subItem.href} 
+                              className={`relative flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 ml-4 ${
+                                isSubActive 
+                                  ? "bg-primary/5 dark:bg-primary/10 text-primary border border-primary/20 dark:border-primary/30" 
+                                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-50/80 dark:hover:bg-gray-800/50 hover:text-primary"
+                              }`}
+                            >
+                              {subItem.icon && (
+                                <subItem.icon className={`h-3 w-3 ${isSubActive ? "text-primary" : "text-gray-500 dark:text-gray-500"}`} />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <span className="font-medium text-xs">{subItem.label}</span>
+                                {subItem.description && (
+                                  <p className="text-xs mt-0.5 text-gray-500 dark:text-gray-400 truncate">
+                                    {subItem.description}
+                                  </p>
+                                )}
+                              </div>
+                              {isSubActive && <div className="w-1 h-1 bg-primary/80 rounded-full" />}
+                            </Link>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
-        </nav>
+          </nav>
+        </ScrollArea>
         {/* Bottom Section - User Info + Logout */}
-        <div className="p-4 space-y-3 border-t border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800 flex-shrink-0 absolute bottom-0 left-0 right-0">
+        <div className="p-4 space-y-3 border-t border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800 flex-shrink-0 mt-auto">
           {user && (
             <div className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 hover:shadow-md transition-all duration-200 cursor-pointer group">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
                   <UserIcon className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -199,7 +486,23 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
           </button>
         </div>
       </div>
-    </div>
+
+      {/* Custom Tooltip */}
+      {tooltip && (
+        <div
+          className="fixed z-[9999] px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-primary to-primary/80 rounded-lg shadow-xl border border-primary/30 pointer-events-none transition-all duration-200 animate-in fade-in-0 zoom-in-95"
+          style={{
+            left: tooltip.x,
+            top: tooltip.y - 20,
+            transform: 'translateY(-50%)'
+          }}
+        >
+          {tooltip.text}
+          {/* Tooltip arrow */}
+          <div className="absolute left-0 top-1/2 w-0 h-0 border-r-4 border-r-primary border-t-4 border-t-transparent border-b-4 border-b-transparent transform -translate-x-full -translate-y-1/2"></div>
+        </div>
+      )}
+    </>
   );
 }
 

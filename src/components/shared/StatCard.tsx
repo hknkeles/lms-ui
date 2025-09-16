@@ -22,9 +22,9 @@ export default function StatCard({
     switch (color) {
       case "primary":
         return {
-          border: "border-primary-500",
-          text: "text-primary-600",
-          bg: "bg-primary-100"
+          border: "border-primary",
+          text: "text-primary",
+          bg: "bg-primary/10"
         };
       case "green":
         return {
@@ -46,9 +46,9 @@ export default function StatCard({
         };
       default:
         return {
-          border: "border-primary-500",
-          text: "text-primary-600",
-          bg: "bg-primary-100"
+          border: "border-primary",
+          text: "text-primary",
+          bg: "bg-primary/10"
         };
     }
   };

@@ -4,15 +4,37 @@ import Card from "@/components/shared/Card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { pendingAssignments } from "@/data/mock/assignments";
-import { Search, Plus, Pencil, Trash2 } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, FileText, Home } from "lucide-react";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 export default function AdminAssignmentsPage() {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Ödevler</h1>
-        <Button className="gap-2"><Plus className="h-4 w-4" />Yeni Ödev</Button>
-      </div>
+    <div className="min-h-screen">
+      <AdminNavbar 
+        title="Ödev Yönetimi"
+        subtitle="Sistem ödevlerini yönetin"
+        icon={<FileText className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Admin",
+              href: "/admin",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Ödevler",
+              active: true
+            }
+          ]
+        }}
+      />
+
+      <div className="pt-24 p-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-xl font-semibold">Ödevler</h1>
+            <Button className="gap-2"><Plus className="h-4 w-4" />Yeni Ödev</Button>
+          </div>
       <Card className="p-4">
         <div className="flex items-center gap-3 mb-4">
           <div className="relative flex-1">
@@ -52,6 +74,8 @@ export default function AdminAssignmentsPage() {
           </table>
         </div>
       </Card>
+        </div>
+      </div>
     </div>
   );
 }

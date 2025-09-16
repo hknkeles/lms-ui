@@ -2,11 +2,34 @@
 
 import Card from "@/components/shared/Card";
 import { mockGrades, mockCourses } from "@/data/mock/dashboard";
+import { GraduationCap, Home } from "lucide-react";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 export default function AdminGradesPage() {
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Notlar</h1>
+    <div className="min-h-screen">
+      <AdminNavbar 
+        title="Not Yönetimi"
+        subtitle="Sistem notlarını yönetin"
+        icon={<GraduationCap className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Admin",
+              href: "/admin",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Notlar",
+              active: true
+            }
+          ]
+        }}
+      />
+
+      <div className="pt-24 p-6">
+        <div className="space-y-4">
+          <h1 className="text-xl font-semibold">Notlar</h1>
       <Card className="p-4">
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
@@ -32,6 +55,8 @@ export default function AdminGradesPage() {
           </table>
         </div>
       </Card>
+        </div>
+      </div>
     </div>
   );
 }

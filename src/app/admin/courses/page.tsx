@@ -3,7 +3,8 @@
 import Card from "@/components/shared/Card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, BookOpen, Home } from "lucide-react";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 const mockCourses = [
   { id: "c1", title: "Matematik 101", teacher: "Prof. A. Yılmaz", students: 240 },
@@ -12,11 +13,32 @@ const mockCourses = [
 
 export default function AdminCoursesPage() {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Dersler</h1>
-        <Button className="gap-2"><Plus className="h-4 w-4" />Yeni Ders</Button>
-      </div>
+    <div className="min-h-screen">
+      <AdminNavbar 
+        title="Ders Yönetimi"
+        subtitle="Sistem derslerini yönetin"
+        icon={<BookOpen className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Admin",
+              href: "/admin",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Dersler",
+              active: true
+            }
+          ]
+        }}
+      />
+
+      <div className="pt-24 p-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-xl font-semibold">Dersler</h1>
+            <Button className="gap-2"><Plus className="h-4 w-4" />Yeni Ders</Button>
+          </div>
       <Card className="p-4">
         <div className="flex items-center gap-3 mb-4">
           <div className="relative flex-1">
@@ -42,6 +64,8 @@ export default function AdminCoursesPage() {
           ))}
         </div>
       </Card>
+        </div>
+      </div>
     </div>
   );
 }

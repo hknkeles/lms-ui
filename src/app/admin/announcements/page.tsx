@@ -3,15 +3,37 @@
 import Card from "@/components/shared/Card";
 import { announcements } from "@/data/announcements";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Megaphone, Home } from "lucide-react";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 export default function AdminAnnouncementsPage() {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Duyurular</h1>
-        <Button className="gap-2"><Plus className="h-4 w-4" />Yeni Duyuru</Button>
-      </div>
+    <div className="min-h-screen">
+      <AdminNavbar 
+        title="Duyuru Yönetimi"
+        subtitle="Sistem duyurularını yönetin"
+        icon={<Megaphone className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Admin",
+              href: "/admin",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Duyurular",
+              active: true
+            }
+          ]
+        }}
+      />
+
+      <div className="pt-24 p-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-xl font-semibold">Duyurular</h1>
+            <Button className="gap-2"><Plus className="h-4 w-4" />Yeni Duyuru</Button>
+          </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {announcements.map(a => (
           <Card key={a.id} className="p-4">
@@ -27,6 +49,8 @@ export default function AdminAnnouncementsPage() {
             </div>
           </Card>
         ))}
+      </div>
+        </div>
       </div>
     </div>
   );

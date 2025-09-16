@@ -106,7 +106,7 @@ export default function CourseListItem({ course, delay = 0 }: CourseListItemProp
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 dark:from-gray-700/5 dark:to-gray-700/10 rounded-3xl"></div>
       
       {/* Subtle Decorative Elements */}
-      <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary-50/20 dark:from-primary-400/10 to-transparent rounded-full -translate-y-24 translate-x-24 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary/10 dark:from-primary/20 to-transparent rounded-full -translate-y-24 translate-x-24 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-blue-50/20 dark:from-blue-400/10 to-transparent rounded-full translate-y-16 -translate-x-16 pointer-events-none"></div>
 
       <div className="relative z-10 flex flex-col lg:flex-row gap-4">
@@ -201,26 +201,26 @@ export default function CourseListItem({ course, delay = 0 }: CourseListItemProp
         <div className="flex-1 min-w-0">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 group-hover:text-primary transition-colors truncate">
                 {course.title}
               </h3>
               
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-300 mb-4">
                 <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20 dark:border-gray-600/30">
-                  <User className="h-4 w-4 text-primary-400 dark:text-primary-300" />
+                  <User className="h-4 w-4 text-primary/70" />
                   <span className="font-medium">{course.teacher}</span>
                 </div>
                 
                 {course.category && (
                   <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20 dark:border-gray-600/30">
-                    <BookOpen className="h-4 w-4 text-primary-400 dark:text-primary-300" />
+                    <BookOpen className="h-4 w-4 text-primary/70" />
                     <span className="font-medium">{course.category}</span>
                   </div>
                 )}
                 
                 {course.duration && (
                   <div className="flex items-center gap-2 bg-white/10 dark:bg-gray-700/20 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20 dark:border-gray-600/30">
-                    <Clock className="h-4 w-4 text-primary-400 dark:text-primary-300" />
+                    <Clock className="h-4 w-4 text-primary/70" />
                     <span className="font-medium">{course.duration}</span>
                   </div>
                 )}
@@ -231,7 +231,7 @@ export default function CourseListItem({ course, delay = 0 }: CourseListItemProp
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">İlerleme</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-primary-600 dark:text-primary-400">{course.progress}%</span>
+                    <span className="text-lg font-bold text-primary">{course.progress}%</span>
                     {course.progress === 100 && (
                       <Award className="h-5 w-5 text-yellow-500 dark:text-yellow-400" />
                     )}
@@ -373,7 +373,7 @@ export default function CourseListItem({ course, delay = 0 }: CourseListItemProp
             {/* Action Button */}
             <div className="flex-shrink-0">
               <motion.div
-                className="bg-gradient-to-r from-primary-500/90 to-primary-600/90 backdrop-blur-sm text-white py-3 px-6 rounded-2xl transition-all duration-200 flex items-center gap-3 font-medium shadow-lg whitespace-nowrap border border-white/20 dark:border-gray-600/30 pointer-events-none"
+                className="bg-gradient-to-r from-primary/90 to-primary/80 backdrop-blur-sm text-white py-3 px-6 rounded-2xl transition-all duration-200 flex items-center gap-3 font-medium shadow-lg whitespace-nowrap border border-white/20 dark:border-gray-600/30 pointer-events-none"
               >
                 <Play className="h-4 w-4" />
                 {course.progress === 100 ? "Tekrar İzle" : "Devam Et"}

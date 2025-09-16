@@ -51,7 +51,7 @@ export default function ModernSelect({ options, value, onChange, placeholder, cl
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 border border-white/30 dark:border-gray-600/30 rounded-2xl focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-all duration-300 bg-white/20 dark:bg-gray-700/20 backdrop-blur-sm text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-white/30 dark:hover:bg-gray-700/30 flex items-center justify-between"
+        className="w-full px-4 py-3 border border-white/30 dark:border-gray-600/30 rounded-2xl focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all duration-300 bg-white/20 dark:bg-gray-700/20 backdrop-blur-sm text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-white/30 dark:hover:bg-gray-700/30 flex items-center justify-between"
       >
         <span className={selectedOption ? "text-gray-900 dark:text-gray-100" : "text-gray-500 dark:text-gray-400"}>
           {selectedOption ? selectedOption.label : placeholder}
@@ -81,13 +81,13 @@ export default function ModernSelect({ options, value, onChange, placeholder, cl
                   onClick={() => handleSelect(option)}
                   className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150 flex items-center justify-between ${
                     option.value === value
-                      ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+                      ? "bg-primary/5 dark:bg-primary/10 text-primary"
                       : "text-gray-700 dark:text-gray-200"
                   }`}
                 >
                   <span>{option.label}</span>
                   {option.value === value && (
-                    <Check className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                    <Check className="h-4 w-4 text-primary" />
                   )}
                 </button>
               ))}

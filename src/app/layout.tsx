@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
-import DarkModeProvider from "@/components/ui/DarkModeProvider";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Toaster } from "sonner";
 import DevRoleSwitcher from "@/components/ui/DevRoleSwitcher";
 
@@ -24,11 +24,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 dark:bg-gray-900`}
       >
-        <DarkModeProvider>
+        <ThemeProvider>
           {children}
           <Toaster position="top-center" richColors />
           <DevRoleSwitcher />
-        </DarkModeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

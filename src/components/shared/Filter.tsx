@@ -59,9 +59,9 @@ export default function Filter({
         };
       default:
         return {
-          primary: "bg-primary-600 hover:bg-primary-700 text-white",
+          primary: "bg-primary hover:bg-primary/90 text-white",
           secondary: "bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200",
-          accent: "border-gray-200 focus:border-primary-500"
+          accent: "border-gray-200 focus:border-primary"
         };
     }
   };

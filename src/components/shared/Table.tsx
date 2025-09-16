@@ -114,14 +114,14 @@ export default function Table<T extends Record<string, any>>({
                         <ChevronUpIcon 
                           className={`w-3 h-3 ${
                             sortKey === column.key && sortDirection === "asc" 
-                              ? "text-primary-600" 
+                              ? "text-primary" 
                               : "text-gray-400"
                           }`} 
                         />
                         <ChevronDownIcon 
                           className={`w-3 h-3 -mt-1 ${
                             sortKey === column.key && sortDirection === "desc" 
-                              ? "text-primary-600" 
+                              ? "text-primary" 
                               : "text-gray-400"
                           }`} 
                         />

@@ -129,7 +129,7 @@ export default function ChatWindow({
             </button>
             
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-sm">
                 <span className="text-white font-semibold text-sm">
                   {conversation.participant.avatar}
                 </span>
@@ -185,7 +185,7 @@ export default function ChatWindow({
               <div className={`flex ${message.isFromUser ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                   message.isFromUser
-                    ? 'bg-primary-500 text-white rounded-br-md'
+                    ? 'bg-primary text-white rounded-br-md'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-bl-md'
                 }`}>
                   <p className="text-sm">{message.content}</p>
@@ -251,7 +251,7 @@ export default function ChatWindow({
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Mesajınızı yazın..."
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none max-h-32"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent resize-none max-h-32"
               rows={1}
             />
           </div>
@@ -266,7 +266,7 @@ export default function ChatWindow({
           <button
             onClick={handleSendMessage}
             disabled={!messageInput.trim()}
-            className="p-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+            className="p-2 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           >
             <Send className="h-5 w-5" />
           </button>

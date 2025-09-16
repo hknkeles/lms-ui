@@ -78,7 +78,7 @@ export default function MessageFilters({
             placeholder="Mesajlarda ara..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
         
@@ -86,7 +86,7 @@ export default function MessageFilters({
           onClick={() => setShowFilters(!showFilters)}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
             showFilters || hasActiveFilters
-              ? "bg-primary-500 text-white"
+              ? "bg-primary text-white"
               : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
           }`}
         >
@@ -129,7 +129,7 @@ export default function MessageFilters({
                   onClick={() => handleFilterChange("status", value)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                     filters.status === value
-                      ? "bg-primary-500 text-white"
+                      ? "bg-primary text-white"
                       : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                   }`}
                 >
@@ -212,7 +212,7 @@ export default function MessageFilters({
                   onClick={() => handleFilterChange("dateRange", value)}
                   className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                     filters.dateRange === value
-                      ? "bg-primary-500 text-white"
+                      ? "bg-primary text-white"
                       : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                   }`}
                 >

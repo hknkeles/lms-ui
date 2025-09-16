@@ -88,7 +88,7 @@ export default function ConversationList({
           <div className="flex items-center gap-2">
             <button
               onClick={onNewConversation}
-              className="p-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-colors"
+              className="p-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
               title="Yeni Konuşma"
             >
               <Plus className="h-4 w-4" />
@@ -97,7 +97,7 @@ export default function ConversationList({
               onClick={() => setShowPinnedOnly(!showPinnedOnly)}
               className={`p-2 rounded-lg transition-colors ${
                 showPinnedOnly 
-                  ? "bg-primary-100 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400" 
+                  ? "bg-primary/10 dark:bg-primary/20 text-primary" 
                   : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
               title="Sabitlenmiş Konuşmalar"
@@ -115,7 +115,7 @@ export default function ConversationList({
             placeholder="Konuşmalarda ara..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
       </div>
@@ -140,21 +140,21 @@ export default function ConversationList({
                 onClick={() => onSelectConversation(conversation)}
                 className={`relative p-3 rounded-lg cursor-pointer transition-all duration-200 mb-1 ${
                   selectedConversationId === conversation.id
-                    ? "bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700"
+                    ? "bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30"
                     : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
                 }`}
               >
                 {/* Pinned indicator */}
                 {conversation.isPinned && (
                   <div className="absolute top-2 right-2">
-                    <Pin className="h-3 w-3 text-primary-500" />
+                    <Pin className="h-3 w-3 text-primary" />
                   </div>
                 )}
 
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
                       <span className="text-white font-semibold text-sm">
                         {conversation.participant.avatar}
                       </span>
@@ -204,7 +204,7 @@ export default function ConversationList({
                   {/* Unread count */}
                   {conversation.unreadCount > 0 && (
                     <div className="flex-shrink-0">
-                      <div className="w-5 h-5 bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-medium">
+                      <div className="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs font-medium">
                         {conversation.unreadCount > 9 ? "9+" : conversation.unreadCount}
                       </div>
                     </div>

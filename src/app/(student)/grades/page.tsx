@@ -11,7 +11,7 @@ export default function GradesPage() {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Genel Ortalama</h3>
-          <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">85.2</div>
+          <div className="text-3xl font-bold text-primary">85.2</div>
           <p className="text-sm text-gray-500 dark:text-gray-400">Bu dönem</p>
         </div>
         
@@ -22,7 +22,7 @@ export default function GradesPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">Prof. Dr. Ahmet Yılmaz</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">88</div>
+              <div className="text-2xl font-bold text-primary">88</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">A</div>
             </div>
           </div>
@@ -33,7 +33,7 @@ export default function GradesPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">Dr. Sarah Johnson</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">82</div>
+              <div className="text-2xl font-bold text-primary">82</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">B+</div>
             </div>
           </div>
@@ -44,7 +44,7 @@ export default function GradesPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">Prof. Dr. Mehmet Kaya</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">91</div>
+              <div className="text-2xl font-bold text-primary">91</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">A+</div>
             </div>
           </div>

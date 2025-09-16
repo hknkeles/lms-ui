@@ -2,7 +2,8 @@
 
 import Card from "@/components/shared/Card";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, MessageSquare, Home } from "lucide-react";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 
 const mockForum = [
   { id: "p1", title: "Sınav haftası duyuruları", author: "Moderatör", replies: 12 },
@@ -11,8 +12,29 @@ const mockForum = [
 
 export default function AdminForumPage() {
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Forum</h1>
+    <div className="min-h-screen">
+      <AdminNavbar 
+        title="Forum Yönetimi"
+        subtitle="Sistem forumunu yönetin"
+        icon={<MessageSquare className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Admin",
+              href: "/admin",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Forum",
+              active: true
+            }
+          ]
+        }}
+      />
+
+      <div className="pt-24 p-6">
+        <div className="space-y-4">
+          <h1 className="text-xl font-semibold">Forum</h1>
       <Card className="p-4">
         <div className="space-y-3">
           {mockForum.map(p => (
@@ -26,6 +48,8 @@ export default function AdminForumPage() {
           ))}
         </div>
       </Card>
+        </div>
+      </div>
     </div>
   );
 }

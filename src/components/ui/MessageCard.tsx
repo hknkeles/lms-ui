@@ -79,12 +79,12 @@ export default function MessageCard({
       className={`group relative bg-white dark:bg-gray-800 rounded-xl border transition-all duration-200 hover:shadow-md ${
         message.isRead 
           ? "border-gray-200 dark:border-gray-700" 
-          : "border-primary-200 dark:border-primary-700 bg-primary-50/30 dark:bg-primary-900/10"
+          : "border-primary/20 dark:border-primary/30 bg-primary/5 dark:bg-primary/10"
       }`}
     >
       {/* Unread indicator */}
       {!message.isRead && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 rounded-l-xl"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"></div>
       )}
 
       <div className="p-4">
@@ -93,7 +93,7 @@ export default function MessageCard({
           <div className="flex items-center gap-3 flex-1 min-w-0">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
                 <span className="text-white font-semibold text-sm">
                   {message.fromAvatar}
                 </span>
@@ -190,7 +190,7 @@ export default function MessageCard({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onReply(message)}
-              className="px-3 py-1.5 bg-primary-500 text-white text-xs rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 bg-primary text-white text-xs rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-1"
             >
               <Reply className="h-3 w-3" />
               Yanıtla

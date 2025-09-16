@@ -78,9 +78,9 @@ export default function Form({
         };
       default:
         return {
-          primary: "bg-primary-600 hover:bg-primary-700 text-white",
+          primary: "bg-primary hover:bg-primary/90 text-white",
           secondary: "bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200",
-          accent: "border-gray-200 focus:border-primary-500 focus:ring-primary-500",
+          accent: "border-gray-200 focus:border-primary focus:ring-primary",
           error: "border-red-500 focus:border-red-500 focus:ring-red-500",
           success: "border-green-500 focus:border-green-500 focus:ring-green-500"
         };
