@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { Post, Comment, formatTimestamp } from "@/data/social";
 import { Button } from "@/components/ui/button";
-import Card from "@/components/ui/Card";
+import Card from "@/components/shared/Card";
 import { Badge } from "@/components/ui/badge";
 import { currentUser } from "@/data/social";
 

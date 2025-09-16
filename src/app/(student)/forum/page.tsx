@@ -40,7 +40,7 @@ import {
 import { useSidebar } from "@/contexts/SidebarContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Card from "@/components/ui/Card";
+import Card from "@/components/shared/Card";
 import { Badge } from "@/components/ui/badge";
 import CreatePostForm from "@/components/ui/CreatePostForm";
 import SocialPost from "@/components/ui/SocialPost";

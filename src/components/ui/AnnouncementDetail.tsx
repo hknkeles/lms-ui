@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { Announcement } from "@/data/announcements";
 import { Button } from "@/components/ui/button";
-import Card from "@/components/ui/Card";
+import Card from "@/components/shared/Card";
 import { Badge } from "@/components/ui/badge";
 
 interface AnnouncementDetailProps {

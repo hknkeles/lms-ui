@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import DashboardPage from "./(dashboard)/page";
-import DashboardLayout from "./(dashboard)/layout";
+import DashboardPage from "./(student)/page";
+import DashboardLayout from "./(student)/layout";
 
 export default function HomePage() {
   const router = useRouter();

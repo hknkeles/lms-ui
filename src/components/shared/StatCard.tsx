@@ -60,18 +60,18 @@ export default function StatCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      className={`bg-white rounded-xl shadow-sm p-8 border-l-4 ${colors.border} hover:shadow-md transition-shadow duration-200`}
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 border-l-4 ${colors.border} hover:shadow-md transition-shadow duration-200`}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-base font-medium text-gray-600 mb-2">{title}</p>
+          <p className="text-base font-medium text-gray-600 dark:text-gray-300 mb-2">{title}</p>
           <p className={`text-4xl font-bold ${colors.text}`}>{value}</p>
           {subtitle && (
-            <p className="text-sm text-gray-500 mt-2">{subtitle}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">{subtitle}</p>
           )}
         </div>
         {icon && (
-          <div className={`p-4 rounded-full ${colors.bg} ${colors.text}`}>
+          <div className={`p-4 rounded-full ${colors.bg} ${colors.text} dark:opacity-90`}>
             {icon}
           </div>
         )}

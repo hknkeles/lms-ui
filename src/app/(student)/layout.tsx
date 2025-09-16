@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Sidebar from "@/components/ui/Sidebar";
+import Sidebar from "@/components/student/Sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,7 +36,7 @@ function DashboardLayoutContent({
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, requireRole } = useAuth();
   const pageTitle = getPageTitle(pathname);
 
   // Auth guard - token yoksa login'e yönlendir
@@ -59,7 +59,7 @@ function DashboardLayoutContent({
   }
 
   // Authenticated değilse hiçbir şey render etme (redirect olacak)
-  if (!isAuthenticated()) {
+  if (!isAuthenticated() || !requireRole('student')) {
     return null;
   }
 
