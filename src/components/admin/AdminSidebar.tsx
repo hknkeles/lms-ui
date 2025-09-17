@@ -20,6 +20,7 @@ import {
   Sun,
   Moon,
   Shield,
+  Key,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -73,7 +74,7 @@ const adminCategories: AdminCategory[] = [
         icon: UserCog, 
         description: "Yönetici listesi",
         subItems: [
-          { label: "Yöneticileri Yönet", href: "/admin/users?role=admin", icon: UserCheck, description: "Yönetici yönetimi" },
+          { label: "Yöneticileri Yönet", href: "/admin/users/managers", icon: UserCheck, description: "Yönetici yönetimi" },
           { label: "Yönetici Ekle", href: "/admin/managers/add", icon: UserPlus, description: "Yeni yönetici ekle" }
         ]
       },
@@ -95,6 +96,17 @@ const adminCategories: AdminCategory[] = [
         subItems: [
           { label: "Öğrencileri Yönet", href: "/admin/users/students", icon: UserCheck, description: "Öğrenci yönetimi" },
           { label: "Yeni Öğrenci Ekle", href: "/admin/users/students/create", icon: UserPlus, description: "Yeni öğrenci ekle" }
+        ]
+      },
+      { 
+        label: "Roller", 
+        href: "/admin/users/roles", 
+        icon: Key, 
+        description: "Rol yönetimi",
+        subItems: [
+          { label: "Tüm Roller", href: "/admin/users/roles", icon: Key, description: "Rol listesi" },
+          { label: "Yeni Rol Ekle", href: "/admin/users/roles/create", icon: UserPlus, description: "Yeni rol ekle" },
+          { label: "İzin Yönetimi", href: "/admin/users/roles/permissions", icon: Shield, description: "İzin tanımlamaları" }
         ]
       },
     ],
@@ -130,7 +142,26 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
   const [isDark, setIsDark] = useState(false);
   const { user, logout } = useAuth();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    
+    // localStorage'dan sidebar durumunu yükle
+    const savedSelectedCategory = localStorage.getItem('admin_sidebar_selected_category');
+    const savedExpandedItems = localStorage.getItem('admin_sidebar_expanded_items');
+    
+    if (savedSelectedCategory) {
+      setSelectedCategory(savedSelectedCategory);
+    }
+    
+    if (savedExpandedItems) {
+      try {
+        const expandedArray = JSON.parse(savedExpandedItems);
+        setExpandedItems(expandedArray);
+      } catch (error) {
+        console.error('Expanded items parse hatası:', error);
+      }
+    }
+  }, []);
 
   // Dark mode toggle function
   const toggleDarkMode = () => {
@@ -173,30 +204,62 @@ export default function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
         if (item.href !== '/admin' && (pathname.startsWith(item.href + '/') || pathname.startsWith(item.href + '?'))) {
           return true;
         }
+        // Sub-items için de kontrol et
+        if (item.subItems) {
+          return item.subItems.some(subItem => 
+            pathname === subItem.href || 
+            pathname.startsWith(subItem.href + '/') || 
+            pathname.startsWith(subItem.href + '?')
+          );
+        }
         return false;
       })
     );
     
     if (currentCategory) {
       setSelectedCategory(currentCategory.id);
+      // localStorage'a kaydet
+      localStorage.setItem('admin_sidebar_selected_category', currentCategory.id);
+      
+      // Eğer current path bir sub-item'a aitse, parent item'ı expand et
+      const parentItem = currentCategory.items.find(item => {
+        if (item.subItems) {
+          return item.subItems.some(subItem => 
+            pathname === subItem.href || 
+            pathname.startsWith(subItem.href + '/') || 
+            pathname.startsWith(subItem.href + '?')
+          );
+        }
+        return false;
+      });
+      
+      if (parentItem && !expandedItems.includes(parentItem.label)) {
+        const newExpandedItems = [...expandedItems, parentItem.label];
+        setExpandedItems(newExpandedItems);
+        localStorage.setItem('admin_sidebar_expanded_items', JSON.stringify(newExpandedItems));
+      }
     }
-  }, [pathname]);
+  }, [pathname, expandedItems]);
 
   const selectCategory = (categoryId: string) => {
     if (selectedCategory === categoryId && isOpen) {
       onToggle();
     } else {
       setSelectedCategory(categoryId);
+      // localStorage'a kaydet
+      localStorage.setItem('admin_sidebar_selected_category', categoryId);
       if (!isOpen) onToggle();
     }
   };
 
   const toggleSubMenu = (itemLabel: string) => {
-    setExpandedItems(prev => 
-      prev.includes(itemLabel) 
-        ? prev.filter(label => label !== itemLabel)
-        : [...prev, itemLabel]
-    );
+    const newExpandedItems = expandedItems.includes(itemLabel) 
+      ? expandedItems.filter(label => label !== itemLabel)
+      : [...expandedItems, itemLabel];
+    
+    setExpandedItems(newExpandedItems);
+    // localStorage'a kaydet
+    localStorage.setItem('admin_sidebar_expanded_items', JSON.stringify(newExpandedItems));
   };
 
   return (

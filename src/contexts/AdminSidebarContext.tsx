@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 interface AdminSidebarContextType {
   sidebarOpen: boolean;
@@ -13,12 +13,33 @@ const AdminSidebarContext = createContext<AdminSidebarContextType | undefined>(u
 export function AdminSidebarProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // localStorage'dan sidebar durumunu yükle
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('admin_sidebar_open');
+    if (savedSidebarState !== null) {
+      setSidebarOpen(JSON.parse(savedSidebarState));
+    }
+  }, []);
+
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    const newState = !sidebarOpen;
+    setSidebarOpen(newState);
+    // localStorage'a kaydet
+    localStorage.setItem('admin_sidebar_open', JSON.stringify(newState));
+  };
+
+  const setSidebarOpenWithPersistence = (open: boolean) => {
+    setSidebarOpen(open);
+    // localStorage'a kaydet
+    localStorage.setItem('admin_sidebar_open', JSON.stringify(open));
   };
 
   return (
-    <AdminSidebarContext.Provider value={{ sidebarOpen, setSidebarOpen, toggleSidebar }}>
+    <AdminSidebarContext.Provider value={{ 
+      sidebarOpen, 
+      setSidebarOpen: setSidebarOpenWithPersistence, 
+      toggleSidebar 
+    }}>
       {children}
     </AdminSidebarContext.Provider>
   );

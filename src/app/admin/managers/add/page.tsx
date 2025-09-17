@@ -8,36 +8,19 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  ArrowLeft,
   Save,
   X,
-  Upload,
   User,
-  Mail,
-  Phone,
-  Building2,
-  Briefcase,
-  MapPin,
-  CalendarIcon,
   Tag,
-  DollarSign,
-  Users,
-  Hash,
-  GraduationCap,
-  Scale,
-  Building,
-  Baby,
   Home,
   Plus,
   AlertTriangle,
-  Lock,
   RefreshCw,
-  Shield,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -58,42 +41,30 @@ const managerSchema = z.object({
   password: z.string().min(6, "Şifre en az 6 karakter olmalı"),
   department: z.string().min(1, "Departman seçin"),
   position: z.string().min(1, "Pozisyon seçin"),
-  birthDate: z.date({
-    required_error: 'Doğum tarihi gerekli',
-  }),
-  startDate: z.date({
-    required_error: 'Başlangıç tarihi gerekli',
-  }),
-  status: z.enum(['active', 'inactive'], {
-    required_error: 'Durum seçin',
-  }),
-  tags: z.array(z.string()).min(1, 'En az bir etiket seçin'),
-  avatar: z.any().optional(),
-  notes: z.string().optional(),
-  emailConfirmation: z.boolean().default(true),
-  kvkkAgreement: z.boolean().refine(val => val === true, "KVKK sözleşmesini kabul etmelisiniz"),
+  roles: z.array(z.string()).min(1, 'En az bir rol seçin'),
 });
 
 type ManagerFormData = z.infer<typeof managerSchema>;
 
-// Available tags for selection
-const availableTags = [
-  'Sistem Yöneticisi',
-  'Yönetici',
-  'Uzman',
-  'Yeni Başlayan',
-  'Önemli',
+// Available roles for selection
+const availableRoles = [
+  { id: 'super-admin', name: 'Süper Yönetici', description: 'Tüm sistem yetkilerine sahip' },
+  { id: 'system-admin', name: 'Sistem Yöneticisi', description: 'Sistem yönetimi ve kullanıcı işlemleri' },
+  { id: 'hr-admin', name: 'İK Yöneticisi', description: 'İnsan kaynakları yönetimi' },
+  { id: 'content-admin', name: 'İçerik Yöneticisi', description: 'İçerik ve kurs yönetimi' },
+  { id: 'support-admin', name: 'Destek Yöneticisi', description: 'Kullanıcı destek işlemleri' },
 ];
 
 export default function AddManagerPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [showTagSelector, setShowTagSelector] = useState(false);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [showExitModal, setShowExitModal] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -114,13 +85,7 @@ export default function AddManagerPage() {
       password: '',
       department: '',
       position: '',
-      birthDate: new Date(),
-      startDate: new Date(),
-      status: 'active',
-      tags: [],
-      notes: '',
-      emailConfirmation: true,
-      kvkkAgreement: false,
+      roles: [],
     },
   });
 
@@ -148,14 +113,14 @@ export default function AddManagerPage() {
     }
   };
 
-  // Handle tag selection
-  const handleTagToggle = (tag: string) => {
-    const newTags = selectedTags.includes(tag)
-      ? selectedTags.filter((t) => t !== tag)
-      : [...selectedTags, tag];
+  // Handle role selection
+  const handleRoleToggle = (roleId: string) => {
+    const newRoles = selectedRoles.includes(roleId)
+      ? selectedRoles.filter((r) => r !== roleId)
+      : [...selectedRoles, roleId];
 
-    setSelectedTags(newTags);
-    setValue('tags', newTags);
+    setSelectedRoles(newRoles);
+    setValue('roles', newRoles);
     setHasChanges(true);
   };
 
@@ -202,15 +167,9 @@ export default function AddManagerPage() {
         password: '',
         department: '',
         position: '',
-        birthDate: new Date(),
-        startDate: new Date(),
-        status: 'active',
-        tags: [],
-        notes: '',
-        emailConfirmation: true,
-        kvkkAgreement: false,
+        roles: [],
       });
-      setSelectedTags([]);
+      setSelectedRoles([]);
       setAvatarPreview(null);
       setHasChanges(false);
       
@@ -330,12 +289,9 @@ export default function AddManagerPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Personal Info */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Personal Information */}
+                {/* Basic Information */}
                 <div className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center">
-                    <User className="h-5 w-5 mr-2" />
-                    Kişisel Bilgiler
-                  </h2>
+                  <h2 className="text-lg font-semibold mb-4">Temel Bilgiler</h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* First Name */}
@@ -347,356 +303,153 @@ export default function AddManagerPage() {
                         placeholder="Ad"
                       />
                       {errors.firstName && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.firstName.message}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
                       )}
                     </div>
 
                     {/* Last Name */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Soyad *
-                      </label>
+                      <label className="block text-sm font-medium mb-2">Soyad *</label>
                       <input
                         {...register('lastName')}
                         className="input w-full"
                         placeholder="Soyad"
                       />
                       {errors.lastName && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.lastName.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Username */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Kullanıcı Adı *
-                      </label>
-                      <div className="relative">
-                        <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <input
-                          {...register('username')}
-                          className="input pl-10 w-full"
-                          placeholder="Kullanıcı adı"
-                        />
-                      </div>
-                      {errors.username && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.username.message}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
                       )}
                     </div>
 
                     {/* Email */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">
-                        E-posta *
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <input
-                          {...register('email')}
-                          className="input pl-10 w-full"
-                          placeholder="ornek@email.com"
-                        />
-                      </div>
+                      <label className="block text-sm font-medium mb-2">E-posta *</label>
+                      <input
+                        {...register('email')}
+                        className="input w-full"
+                        placeholder="ornek@email.com"
+                      />
                       {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.email.message}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
                       )}
                     </div>
 
                     {/* Phone */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Telefon *
-                      </label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <input
-                          {...register('phone')}
-                          className="input pl-10 w-full"
-                          placeholder="+90 5XX XXX XX XX"
-                        />
-                      </div>
+                      <label className="block text-sm font-medium mb-2">Telefon *</label>
+                      <input
+                        {...register('phone')}
+                        className="input w-full"
+                        placeholder="+90 5XX XXX XX XX"
+                      />
                       {errors.phone && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.phone.message}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
                       )}
                     </div>
 
-                    {/* Birth Date */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Doğum Tarihi *
-                      </label>
-                      <div className="relative">
-                        <Baby className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <input
-                          type="date"
-                          {...register('birthDate', { 
-                            valueAsDate: true,
-                            setValueAs: (value) => value ? new Date(value) : new Date()
-                          })}
-                          className="input pl-10 w-full"
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              setValue('birthDate', new Date(e.target.value));
-                              setHasChanges(true);
-                            }
-                          }}
-                        />
-                      </div>
-                      {errors.birthDate && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.birthDate.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Work Information */}
-                <div className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center">
-                    <Briefcase className="h-5 w-5 mr-2" />
-                    İş Bilgileri
-                  </h2>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Department */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Departman *
-                      </label>
-                      <div className="relative">
-                        <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <select
-                          {...register('department')}
-                          className="input pl-10 w-full"
-                        >
-                          <option value="">Departman seçin</option>
-                          <option value="Bilgi İşlem">Bilgi İşlem</option>
-                          <option value="İnsan Kaynakları">İnsan Kaynakları</option>
-                          <option value="Muhasebe">Muhasebe</option>
-                          <option value="Pazarlama">Pazarlama</option>
-                          <option value="Satış">Satış</option>
-                          <option value="Yönetim">Yönetim</option>
-                        </select>
-                      </div>
+                      <label className="block text-sm font-medium mb-2">Departman *</label>
+                      <select {...register('department')} className="input w-full">
+                        <option value="">Departman seçin</option>
+                        <option value="Bilgi İşlem">Bilgi İşlem</option>
+                        <option value="İnsan Kaynakları">İnsan Kaynakları</option>
+                        <option value="Muhasebe">Muhasebe</option>
+                        <option value="Pazarlama">Pazarlama</option>
+                        <option value="Satış">Satış</option>
+                        <option value="Yönetim">Yönetim</option>
+                      </select>
                       {errors.department && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.department.message}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.department.message}</p>
                       )}
                     </div>
 
                     {/* Position */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Pozisyon *
-                      </label>
-                      <div className="relative">
-                        <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <select
-                          {...register('position')}
-                          className="input pl-10 w-full"
-                        >
-                          <option value="">Pozisyon seçin</option>
-                          <option value="Sistem Yöneticisi">Sistem Yöneticisi</option>
-                          <option value="IT Yöneticisi">IT Yöneticisi</option>
-                          <option value="Proje Yöneticisi">Proje Yöneticisi</option>
-                          <option value="Takım Lideri">Takım Lideri</option>
-                          <option value="Uzman">Uzman</option>
-                        </select>
-                      </div>
-                      {errors.position && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.position.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Start Date */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        İşe Başlama Tarihi *
-                      </label>
-                      <div className="relative">
-                        <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <input
-                          type="date"
-                          {...register('startDate', { 
-                            valueAsDate: true,
-                            setValueAs: (value) => value ? new Date(value) : new Date()
-                          })}
-                          className="input pl-10 w-full"
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              setValue('startDate', new Date(e.target.value));
-                              setHasChanges(true);
-                            }
-                          }}
-                        />
-                      </div>
-                      {errors.startDate && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.startDate.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Status */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Durum *
-                      </label>
-                      <select {...register('status')} className="input w-full">
-                        <option value="active">Aktif</option>
-                        <option value="inactive">Pasif</option>
+                      <label className="block text-sm font-medium mb-2">Pozisyon *</label>
+                      <select {...register('position')} className="input w-full">
+                        <option value="">Pozisyon seçin</option>
+                        <option value="Sistem Yöneticisi">Sistem Yöneticisi</option>
+                        <option value="IT Yöneticisi">IT Yöneticisi</option>
+                        <option value="Proje Yöneticisi">Proje Yöneticisi</option>
+                        <option value="Takım Lideri">Takım Lideri</option>
+                        <option value="Uzman">Uzman</option>
                       </select>
-                      {errors.status && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.status.message}
-                        </p>
+                      {errors.position && (
+                        <p className="text-red-500 text-sm mt-1">{errors.position.message}</p>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* Security Information */}
+                {/* Account Information */}
                 <div className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center">
-                    <Lock className="h-5 w-5 mr-2" />
-                    Güvenlik Bilgileri
-                  </h2>
+                  <h2 className="text-lg font-semibold mb-4">Hesap Bilgileri</h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Username */}
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Kullanıcı Adı *</label>
+                      <input
+                        {...register('username')}
+                        className="input w-full"
+                        placeholder="Kullanıcı adı"
+                      />
+                      {errors.username && (
+                        <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
+                      )}
+                    </div>
+
                     {/* Password */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Şifre *
-                      </label>
+                      <label className="block text-sm font-medium mb-2">Şifre *</label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <input
                           {...register('password')}
-                          type="password"
-                          className="input pl-10 w-full"
+                          type={showPassword ? "text" : "password"}
+                          className="input pr-10 w-full"
                           placeholder="Şifre"
                         />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
                       </div>
                       {errors.password && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.password.message}
-                        </p>
+                        <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
                       )}
                     </div>
 
                     {/* Generate Password Button */}
-                    <div className="flex items-end">
+                    <div className="md:col-span-2">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={generatePassword}
-                        className="w-full"
+                        className="w-full md:w-auto"
                       >
                         <RefreshCw className="h-4 w-4 mr-2" />
-                        Şifre Oluştur
+                        Otomatik Şifre Oluştur
                       </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Notes */}
-                <div className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center">
-                    <User className="h-5 w-5 mr-2" />
-                    Notlar ve Onaylar
-                  </h2>
-
-                  <div className="space-y-4">
-                    {/* Notes */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Notlar
-                      </label>
-                      <textarea
-                        {...register('notes')}
-                        className="input w-full min-h-[100px] resize-none"
-                        placeholder="Yönetici hakkında notlar..."
-                        rows={4}
-                        onChange={(e) => {
-                          setValue('notes', e.target.value);
-                          setHasChanges(true);
-                        }}
-                      />
-                      {errors.notes && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.notes.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Checkboxes */}
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          id="emailConfirmation"
-                          checked={watch("emailConfirmation")}
-                          onCheckedChange={(checked) => {
-                            setValue("emailConfirmation", !!checked);
-                            setHasChanges(true);
-                          }}
-                        />
-                        <label htmlFor="emailConfirmation" className="text-sm font-medium">
-                          Email Onay
-                        </label>
-                      </div>
-
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          id="kvkkAgreement"
-                          checked={watch("kvkkAgreement")}
-                          onCheckedChange={(checked) => {
-                            setValue("kvkkAgreement", !!checked);
-                            setHasChanges(true);
-                          }}
-                        />
-                        <label htmlFor="kvkkAgreement" className="text-sm font-medium">
-                          KVKK Aydınlatma Metni
-                        </label>
-                        <span className="text-sm text-muted-foreground">
-                          KVKK sözleşmesini okudum, kabul ediyorum.
-                        </span>
-                      </div>
-                      {errors.kvkkAgreement && (
-                        <p className="text-sm text-destructive">
-                          {errors.kvkkAgreement.message}
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Right Column - Avatar & Actions */}
+              {/* Right Column - Preview, Tags & Actions */}
               <div className="space-y-6">
-                {/* Avatar Upload */}
+                {/* Yönetici Önizleme */}
                 <div className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4">Profil Fotoğrafı</h2>
+                  <h2 className="text-lg font-semibold mb-4">Yönetici Önizleme</h2>
 
-                  <div className="space-y-4">
-                    {/* Avatar Preview and Upload Button */}
-                    <div className="flex items-center space-x-4">
-                      {/* Avatar Preview */}
+                  {/* Kimlik Kartı Görünümü */}
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                    <div className="flex items-start gap-4">
+                      {/* Avatar */}
                       <div className="relative">
-                        <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                        <div className="w-16 h-16 rounded-lg bg-white dark:bg-gray-600 flex items-center justify-center overflow-hidden shadow-sm border border-gray-200 dark:border-gray-500">
                           {avatarPreview ? (
                             <img
                               src={avatarPreview}
@@ -704,37 +457,18 @@ export default function AddManagerPage() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <User className="w-16 h-16 text-muted-foreground" />
+                            <User className="w-8 h-8 text-gray-400" />
                           )}
                         </div>
-
-                        {avatarPreview && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setAvatarPreview(null);
-                              setValue('avatar', undefined);
-                              setHasChanges(true);
-                            }}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Upload Button */}
-                      <div className="flex-1">
                         <Button
                           type="button"
                           variant="outline"
+                          size="sm"
                           onClick={() => fileInputRef.current?.click()}
-                          className="w-full"
+                          className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full p-0 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500"
                         >
-                          <Upload className="h-4 w-4 mr-2" />
-                          Fotoğraf Yükle
+                          <Plus className="h-3 w-3" />
                         </Button>
-
                         <input
                           ref={fileInputRef}
                           type="file"
@@ -742,95 +476,119 @@ export default function AddManagerPage() {
                           onChange={handleAvatarUpload}
                           className="hidden"
                         />
+                      </div>
 
-                        <p className="text-xs text-muted-foreground mt-2">
-                          PNG, JPG veya GIF. Maksimum 5MB.
-                        </p>
+                      {/* Bilgiler */}
+                      <div className="flex-1 space-y-1">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {watch('firstName') && watch('lastName') 
+                            ? `${watch('firstName')} ${watch('lastName')}`
+                            : 'Ad Soyad'
+                          }
+                        </div>
+                        
+                        {watch('department') && (
+                          <div className="text-xs text-gray-600 dark:text-gray-300">
+                            {watch('department')}
+                          </div>
+                        )}
+                        
+                        {watch('position') && (
+                          <div className="text-xs text-gray-600 dark:text-gray-300">
+                            {watch('position')}
+                          </div>
+                        )}
+
+                        {watch('email') && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            {watch('email')}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
+
+                  {/* Selected Roles */}
+                  {selectedRoles.length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
+                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Roller:
+                      </h4>
+                      <div className="flex flex-wrap gap-1">
+                        {selectedRoles.map((roleId) => {
+                          const role = availableRoles.find(r => r.id === roleId);
+                          return (
+                            <span
+                              key={roleId}
+                              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+                            >
+                              {role?.name || roleId}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Tags */}
+                {/* Roles */}
                 <div className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center">
-                    <Tag className="h-5 w-5 mr-2" />
-                    Etiketler *
-                  </h2>
+                  <h2 className="text-lg font-semibold mb-4">Roller *</h2>
 
-                  <div className="space-y-4">
-                    {/* Selected Tags */}
-                    {selectedTags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedTags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary/10 text-primary border border-primary/20"
-                          >
-                            {tag}
-                            <button
-                              type="button"
-                              onClick={() => handleTagToggle(tag)}
-                              className="ml-2 hover:bg-primary/20 rounded-full p-1"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Tag Selector */}
+                  <div className="space-y-3">
+                    {/* Role Selector */}
                     <div className="relative">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Etiket seç veya ara..."
-                          className="input w-full pr-10 cursor-pointer"
-                          onClick={() => setShowTagSelector(!showTagSelector)}
-                          readOnly
-                        />
-                        <Tag className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      </div>
+                      <input
+                        type="text"
+                        placeholder="Rol seç veya ara..."
+                        className="input w-full pr-10 cursor-pointer"
+                        onClick={() => setShowRoleSelector(!showRoleSelector)}
+                        readOnly
+                      />
+                      <Tag className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
-                      {showTagSelector && (
+                      {showRoleSelector && (
                         <>
-                          {/* Backdrop for closing dropdown */}
                           <div 
                             className="fixed inset-0 z-40" 
-                            onClick={() => setShowTagSelector(false)}
+                            onClick={() => setShowRoleSelector(false)}
                           />
                           
                           <div className="absolute top-full left-0 right-0 mt-2 z-50">
                             <Command className="rounded-lg border border-border bg-background shadow-lg backdrop-blur-sm">
                               <CommandInput 
-                                placeholder="Etiket ara..." 
+                                placeholder="Rol ara..." 
                                 className="border-0 focus:ring-0 focus:outline-none"
                                 autoFocus
                               />
                               <CommandList className="max-h-48 overflow-y-auto">
                                 <CommandEmpty className="py-4 text-center text-muted-foreground">
-                                  Etiket bulunamadı.
+                                  Rol bulunamadı.
                                 </CommandEmpty>
                                 <CommandGroup>
-                                  {availableTags.map((tag) => (
+                                  {availableRoles.map((role) => (
                                     <CommandItem
-                                      key={tag}
+                                      key={role.id}
                                       onSelect={() => {
-                                        handleTagToggle(tag);
-                                        setShowTagSelector(false);
+                                        handleRoleToggle(role.id);
+                                        setShowRoleSelector(false);
                                       }}
-                                      className="flex items-center space-x-3 px-3 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
+                                      className="flex items-center space-x-3 px-3 py-2 hover:bg-primary/5 hover:text-primary cursor-pointer transition-colors"
                                     >
                                       <div className="flex items-center justify-center w-4 h-4">
                                         <input
                                           type="checkbox"
-                                          checked={selectedTags.includes(tag)}
+                                          checked={selectedRoles.includes(role.id)}
                                           onChange={() => {}}
-                                          className="w-4 h-4 rounded border-border text-primary focus:ring-primary focus:ring-2 focus:ring-offset-2"
+                                          className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-2 focus:ring-offset-2"
                                         />
                                       </div>
-                                      <span className="text-sm font-medium">{tag}</span>
+                                      <div className="flex-1 min-w-0">
+                                        <span className="text-sm font-medium">{role.name}</span>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                          {role.description}
+                                        </p>
+                                      </div>
                                     </CommandItem>
                                   ))}
                                 </CommandGroup>
@@ -841,29 +599,35 @@ export default function AddManagerPage() {
                       )}
                     </div>
 
-                    {errors.tags && (
-                      <p className="text-red-500 text-sm">{errors.tags.message}</p>
+                    {errors.roles && (
+                      <p className="text-red-500 text-sm">{errors.roles.message}</p>
                     )}
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Form Footer */}
-            <div className="flex justify-end space-x-3 pt-6 border-t border-border">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleNavigation('/admin/users?role=admin')}
-                disabled={isSubmitting}
-              >
-                <X className="h-4 w-4 mr-2" />
-                İptal
-              </Button>
-              <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-                <Save className="h-4 w-4 mr-2" />
-                {isSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
-              </Button>
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                  <Button 
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    disabled={isSubmitting}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {isSubmitting ? 'Kaydediliyor...' : 'Yöneticiyi Kaydet'}
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleNavigation('/admin/users?role=admin')}
+                    disabled={isSubmitting}
+                    className="w-full"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    İptal
+                  </Button>
+                </div>
+              </div>
             </div>
           </motion.form>
         </div>
