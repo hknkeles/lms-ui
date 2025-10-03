@@ -22,6 +22,8 @@ import { useRouter } from "next/navigation";
 import { useMemo, useCallback, useState } from "react";
 import { getDashboardStats, getRecentCourses } from "@/data/mock/dashboard";
 import { useSidebar } from "@/contexts/SidebarContext";
+import StudentNavbar from "@/components/student/StudentNavbar";
+import { Home } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -165,70 +167,22 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Modern Navbar */}
-      <div className={`fixed top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm transition-all duration-300 ${
-        sidebarOpen ? 'left-[22rem] right-0' : 'left-16 right-0'
-      }`}>
-        <div className="px-4 py-2">
-          {/* Navbar Header */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                  <Target className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Genel bakış ve hızlı erişim</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <div className="relative group">
-                <button 
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                >
-                  <Search className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Arama
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
-              </div>
-
-              <div className="relative group">
-                <button
-                  onClick={() => {
-                    if (!document.fullscreenElement) {
-                      document.documentElement.requestFullscreen();
-                    } else {
-                      document.exitFullscreen();
-                    }
-                  }}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                >
-                  <Maximize className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Tam Ekran
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <StudentNavbar 
+        title="Dashboard"
+        subtitle="Genel bakış ve hızlı erişim"
+        icon={<Target className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Ana Sayfa",
+              active: true
+            }
+          ]
+        }}
+      />
 
       {/* Content with top padding for navbar */}
-      <div className="pt-16">
+      <div className="pt-24">
         <div className="w-full space-y-6 lg:space-y-8">
         
         {/* Header Section */}

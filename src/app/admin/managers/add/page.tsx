@@ -42,6 +42,8 @@ const managerSchema = z.object({
   department: z.string().min(1, "Departman seçin"),
   position: z.string().min(1, "Pozisyon seçin"),
   roles: z.array(z.string()).min(1, 'En az bir rol seçin'),
+  avatar: z.any().optional(),
+  notes: z.string().optional(),
 });
 
 type ManagerFormData = z.infer<typeof managerSchema>;
@@ -86,6 +88,8 @@ export default function AddManagerPage() {
       department: '',
       position: '',
       roles: [],
+      avatar: undefined,
+      notes: '',
     },
   });
 
@@ -168,6 +172,8 @@ export default function AddManagerPage() {
         department: '',
         position: '',
         roles: [],
+        avatar: undefined,
+        notes: '',
       });
       setSelectedRoles([]);
       setAvatarPreview(null);

@@ -28,6 +28,9 @@ import {
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { toast } from "sonner";
+import StudentNavbar from "@/components/student/StudentNavbar";
+import { Home, BookOpen, ChevronDown } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Mock data - gerçek uygulamada API'den gelecek
 const materials = [
@@ -155,13 +158,16 @@ export default function MaterialsPage() {
   const { sidebarOpen } = useSidebar();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedType, setSelectedType] = useState("Tümü");
-  const [selectedCourse, setSelectedCourse] = useState("Tümü");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(["pdf", "video", "link", "image"]);
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<"date" | "name" | "downloads">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [favoriteMaterials, setFavoriteMaterials] = useState<Set<string>>(new Set());
+  const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
+  const [isCourseDropdownOpen, setIsCourseDropdownOpen] = useState(false);
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -177,8 +183,8 @@ export default function MaterialsPage() {
                            material.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            material.teacher.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            material.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesType = selectedType === "Tümü" || material.type === selectedType;
-      const matchesCourse = selectedCourse === "Tümü" || material.course === selectedCourse;
+      const matchesType = selectedTypes.includes(material.type);
+      const matchesCourse = selectedCourses.length === 0 || selectedCourses.includes(material.course);
       
       return matchesSearch && matchesType && matchesCourse;
     });
@@ -207,7 +213,7 @@ export default function MaterialsPage() {
       ...material,
       isFavorite: favoriteMaterials.has(material.id)
     }));
-  }, [searchTerm, selectedType, selectedCourse, sortBy, sortOrder, favoriteMaterials]);
+  }, [searchTerm, selectedTypes, selectedCourses, sortBy, sortOrder, favoriteMaterials]);
 
   const toggleFavorite = useCallback((materialId: string) => {
     setFavoriteMaterials(prev => {
@@ -240,38 +246,91 @@ export default function MaterialsPage() {
   };
 
   // Get unique courses and types for filters
-  const courses = ["Tümü", ...Array.from(new Set(materials.map(material => material.course)))];
-  const types = ["Tümü", ...Array.from(new Set(materials.map(material => material.type)))];
+  const availableCourses = Array.from(new Set(materials.map(material => material.course)));
+  const availableTypes = [
+    { id: "pdf", label: "PDF", icon: FileText },
+    { id: "video", label: "Video", icon: Video },
+    { id: "link", label: "Link", icon: LinkIcon },
+    { id: "image", label: "Resim", icon: Image }
+  ];
+
+  const sortOptions = [
+    { id: "date", label: "Tarih", icon: Calendar },
+    { id: "name", label: "İsim", icon: FileText },
+    { id: "downloads", label: "İndirme", icon: Download }
+  ];
+
+  const handleTypeToggle = (typeId: string) => {
+    setSelectedTypes(prev => 
+      prev.includes(typeId) 
+        ? prev.filter(t => t !== typeId)
+        : [...prev, typeId]
+    );
+  };
+
+  const handleCourseToggle = (courseId: string) => {
+    setSelectedCourses(prev => 
+      prev.includes(courseId) 
+        ? prev.filter(c => c !== courseId)
+        : [...prev, courseId]
+    );
+  };
+
+  const getSelectedTypesLabel = () => {
+    if (selectedTypes.length === availableTypes.length) return "Tüm Türler";
+    if (selectedTypes.length === 0) return "Tür Seçin";
+    if (selectedTypes.length === 1) {
+      const type = availableTypes.find(t => t.id === selectedTypes[0]);
+      return type?.label || "Tür Seçin";
+    }
+    return `${selectedTypes.length} Tür Seçili`;
+  };
+
+  const getSelectedCoursesLabel = () => {
+    if (selectedCourses.length === 0) return "Tüm Dersler";
+    if (selectedCourses.length === 1) {
+      return selectedCourses[0];
+    }
+    return `${selectedCourses.length} Ders Seçili`;
+  };
+
+  const getSortLabel = () => {
+    const option = sortOptions.find(o => o.id === sortBy);
+    return option?.label || "Sırala";
+  };
 
   return (
     <div className="min-h-screen">
-      {/* Modern Navbar */}
-      <div className={`fixed top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm rounded-b-2xl transition-all duration-300 ${
-        sidebarOpen ? 'left-[22rem] right-0' : 'left-16 right-0'
-      }`}>
-        <div className="px-4 py-2">
-          {/* Navbar Header */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <FolderOpen className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">Ders Materyalleri</h1>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Tüm ders materyallerinizi buradan yönetin</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Search Bar - Center */}
-            <div className="flex-1 max-w-sm mx-6">
+      <StudentNavbar 
+        title="Ders Materyalleri"
+        subtitle="Tüm ders materyallerinizi buradan yönetin"
+        icon={<FolderOpen className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Ana Sayfa",
+              href: "/",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Derslerim",
+              href: "/courses",
+              icon: <BookOpen className="h-3 w-3" />
+            },
+            {
+              label: "Ders Materyalleri",
+              active: true
+            }
+          ]
+        }}
+      />
+
+      {/* Search and Filter Bar */}
+      <div className="pt-24 px-4 py-4">
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-4 border border-white/20 dark:border-slate-700/50 shadow-xl mb-6">
+          <div className="flex flex-col lg:flex-row gap-4 items-center">
+            {/* Search Bar */}
+            <div className="flex-1 w-full lg:w-auto">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
@@ -279,33 +338,149 @@ export default function MaterialsPage() {
                   placeholder="Materyal ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm shadow-sm"
+                  className="w-full pl-10 pr-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm shadow-sm"
                 />
               </div>
             </div>
             
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <div className="relative group">
-                <button 
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className={`p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${
-                    isFilterOpen ? 'bg-gray-100 dark:bg-gray-800' : ''
-                  }`}
+            {/* Filter Controls */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Type Multi-Select Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors min-w-[140px]"
                 >
-                  <Filter className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  <span className="truncate">{getSelectedTypesLabel()}</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isTypeDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Filtrele
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
+                
+                {isTypeDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsTypeDropdownOpen(false)}
+                    />
+                    <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                      <div className="p-2">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-2">
+                          Materyal Türleri
+                        </div>
+                        {availableTypes.map((type) => {
+                          const TypeIcon = type.icon;
+                          const isSelected = selectedTypes.includes(type.id);
+                          return (
+                            <div
+                              key={type.id}
+                              onClick={() => handleTypeToggle(type.id)}
+                              className="flex items-center gap-3 px-2 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md cursor-pointer transition-colors"
+                            >
+                              <Checkbox
+                                checked={isSelected}
+                                onChange={() => {}}
+                                className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                              />
+                              <TypeIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              <span className="text-sm text-gray-900 dark:text-white">{type.label}</span>
+                            </div>
+                          );
+                        })}
+                        <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
+                          <button
+                            onClick={() => {
+                              setSelectedTypes(availableTypes.map(t => t.id));
+                              setIsTypeDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-2 py-1 text-xs text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-md transition-colors"
+                          >
+                            Tümünü Seç
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedTypes([]);
+                              setIsTypeDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
+                          >
+                            Tümünü Temizle
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Course Multi-Select Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsCourseDropdownOpen(!isCourseDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors min-w-[160px]"
+                >
+                  <span className="truncate">{getSelectedCoursesLabel()}</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isCourseDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {isCourseDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsCourseDropdownOpen(false)}
+                    />
+                    <div className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                      <div className="p-2">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-2">
+                          Dersler
+                        </div>
+                        {availableCourses.map((course) => {
+                          const isSelected = selectedCourses.includes(course);
+                          return (
+                            <div
+                              key={course}
+                              onClick={() => handleCourseToggle(course)}
+                              className="flex items-center gap-3 px-2 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md cursor-pointer transition-colors"
+                            >
+                              <Checkbox
+                                checked={isSelected}
+                                onChange={() => {}}
+                                className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                              />
+                              <BookOpen className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              <span className="text-sm text-gray-900 dark:text-white truncate">{course}</span>
+                            </div>
+                          );
+                        })}
+                        <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
+                          <button
+                            onClick={() => {
+                              setSelectedCourses(availableCourses);
+                              setIsCourseDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-2 py-1 text-xs text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-md transition-colors"
+                          >
+                            Tümünü Seç
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedCourses([]);
+                              setIsCourseDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
+                          >
+                            Tümünü Temizle
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* View Mode Toggle */}
               <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-1.5 rounded-md transition-colors ${
+                  className={`p-2 rounded-md transition-colors ${
                     viewMode === "grid" 
                       ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm" 
                       : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -315,7 +490,7 @@ export default function MaterialsPage() {
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-1.5 rounded-md transition-colors ${
+                  className={`p-2 rounded-md transition-colors ${
                     viewMode === "list" 
                       ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm" 
                       : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -325,103 +500,85 @@ export default function MaterialsPage() {
                 </button>
               </div>
 
-              <div className="relative group">
+              {/* Sort Dropdown */}
+              <div className="relative">
                 <button
-                  onClick={() => {
-                    if (!document.fullscreenElement) {
-                      document.documentElement.requestFullscreen();
-                    } else {
-                      document.exitFullscreen();
-                      toast.info("Tam ekran modu kapatıldı");
-                    }
-                  }}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors min-w-[120px]"
                 >
-                  <Maximize className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  <span className="truncate">{getSortLabel()}</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Tam Ekran
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
+                
+                {isSortDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsSortDropdownOpen(false)}
+                    />
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                      <div className="p-2">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-2">
+                          Sıralama
+                        </div>
+                        {sortOptions.map((option) => {
+                          const OptionIcon = option.icon;
+                          const isSelected = sortBy === option.id;
+                          return (
+                            <div
+                              key={option.id}
+                              onClick={() => {
+                                setSortBy(option.id as "date" | "name" | "downloads");
+                                setIsSortDropdownOpen(false);
+                              }}
+                              className="flex items-center gap-3 px-2 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md cursor-pointer transition-colors"
+                            >
+                              <div className={`w-2 h-2 rounded-full ${isSelected ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                              <OptionIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              <span className="text-sm text-gray-900 dark:text-white">{option.label}</span>
+                            </div>
+                          );
+                        })}
+                        <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
+                          <button
+                            onClick={() => {
+                              setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+                              setIsSortDropdownOpen(false);
+                            }}
+                            className="w-full flex items-center gap-2 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
+                          >
+                            {sortOrder === "asc" ? (
+                              <SortAsc className="h-3 w-3" />
+                            ) : (
+                              <SortDesc className="h-3 w-3" />
+                            )}
+                            {sortOrder === "asc" ? "Artan" : "Azalan"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
+
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedTypes(availableTypes.map(t => t.id));
+                  setSelectedCourses([]);
+                }}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <X className="h-4 w-4" />
+                Temizle
+              </button>
             </div>
           </div>
-
-          {/* Filters and Sort - Conditional */}
-          {isFilterOpen && (
-            <div className="bg-gray-50/50 dark:bg-gray-800/30 rounded-lg p-1.5 border border-gray-200/50 dark:border-gray-700/50">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex flex-wrap items-center gap-1">
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-xs focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  >
-                    {types.map(type => (
-                      <option key={type} value={type}>
-                        {type === "Tümü" ? "Tüm Türler" : type.toUpperCase()}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={selectedCourse}
-                    onChange={(e) => setSelectedCourse(e.target.value)}
-                    className="px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-xs focus:ring-2 focus:ring-green-500 focus:border-transparent min-w-[120px]"
-                  >
-                    {courses.map(course => (
-                      <option key={course} value={course}>
-                        {course === "Tümü" ? "Tüm Dersler" : course}
-                      </option>
-                    ))}
-                  </select>
-
-                  <button
-                    onClick={() => {
-                      setSearchTerm("");
-                      setSelectedType("Tümü");
-                      setSelectedCourse("Tümü");
-                    }}
-                    className="flex items-center gap-1 px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-lg transition-all duration-200 text-xs font-medium"
-                  >
-                    <X className="h-3 w-3" />
-                    Temizle
-                  </button>
-                </div>
-
-                {/* Sort Options */}
-                <div className="flex items-center gap-1">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as "date" | "name" | "downloads")}
-                    className="px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-xs focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  >
-                    <option value="date">Tarih</option>
-                    <option value="name">İsim</option>
-                    <option value="downloads">İndirme</option>
-                  </select>
-                  
-                  <button
-                    onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-                    className="p-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    {sortOrder === "asc" ? (
-                      <SortAsc className="h-3 w-3 text-gray-600 dark:text-gray-400" />
-                    ) : (
-                      <SortDesc className="h-3 w-3 text-gray-600 dark:text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Materials Grid/List */}
-      <div className={`px-4 py-4 pb-16 transition-all duration-300 ${
-        isFilterOpen ? 'pt-32' : 'pt-16'
-      }`}>
+      <div className="px-4 pb-16">
         {filteredMaterials.length > 0 ? (
           <div className={viewMode === "grid" 
             ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" 
@@ -614,8 +771,8 @@ export default function MaterialsPage() {
             <button
               onClick={() => {
                 setSearchTerm("");
-                setSelectedType("Tümü");
-                setSelectedCourse("Tümü");
+                setSelectedTypes(availableTypes.map(t => t.id));
+                setSelectedCourses([]);
               }}
               className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
             >

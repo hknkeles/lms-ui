@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import StudentNavbar from "@/components/student/StudentNavbar";
+import { Home } from "lucide-react";
 
 // Mock data for events
 const mockEvents = [
@@ -361,67 +363,27 @@ export default function SchedulePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Modern Navbar */}
-      <div className={`fixed top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm transition-all duration-300 ${
-        sidebarOpen ? 'left-[22rem] right-0' : 'left-16 right-0'
-      }`}>
-        <div className="px-4 py-2">
-          {/* Navbar Header */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">Ders Programı</h1>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Planlarınızı görüntüleyin ve yönetin</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <Button 
-                onClick={openAddEventModal}
-                className="flex items-center gap-2"
-                size="sm"
-              >
-                <Plus className="h-4 w-4" />
-                Etkinlik Ekle
-              </Button>
-              
-              <div className="relative group">
-                <button
-                  onClick={() => {
-                    if (!document.fullscreenElement) {
-                      document.documentElement.requestFullscreen();
-                    } else {
-                      document.exitFullscreen();
-                    }
-                  }}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                >
-                  <Maximize className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Tam Ekran
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <StudentNavbar 
+        title="Ders Programı"
+        subtitle="Planlarınızı görüntüleyin ve yönetin"
+        icon={<Calendar className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Ana Sayfa",
+              href: "/",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Ders Programı",
+              active: true
+            }
+          ]
+        }}
+      />
 
       {/* Content with top padding for navbar */}
-      <div className="pt-16">
+      <div className="pt-24">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">

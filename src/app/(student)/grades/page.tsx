@@ -1,6 +1,32 @@
+"use client";
+
+import StudentNavbar from "@/components/student/StudentNavbar";
+import { GraduationCap, Home } from "lucide-react";
+
 export default function GradesPage() {
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen">
+      <StudentNavbar 
+        title="Notlar"
+        subtitle="Tüm derslerindeki notların ve genel ortalaman"
+        icon={<GraduationCap className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Ana Sayfa",
+              href: "/",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Notlar",
+              active: true
+            }
+          ]
+        }}
+      />
+      
+      <div className="pt-24 px-4 py-6">
+        <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Notlar</h2>
         <p className="text-gray-600 dark:text-gray-400">
@@ -49,6 +75,7 @@ export default function GradesPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

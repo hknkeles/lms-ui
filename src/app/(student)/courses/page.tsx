@@ -9,6 +9,8 @@ import { BookOpen, Plus, Search, StickyNote, X, ChevronLeft, Maximize, Filter } 
 import ModernSelect from "@/components/ui/ModernSelect";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { toast } from "sonner";
+import StudentNavbar from "@/components/student/StudentNavbar";
+import { Home } from "lucide-react";
 
 // Mock data - gerçek uygulamada API'den gelecek
 const courses = [
@@ -235,162 +237,28 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Modern Navbar */}
-      <div className={`fixed top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm transition-all duration-300 ${
-        sidebarOpen ? 'left-[22rem] right-0' : 'left-16 right-0'
-      }`}>
-        <div className="px-4 py-2">
-          {/* Navbar Header */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">Derslerim</h1>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Tüm derslerinizi buradan yönetin</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Search Bar - Center */}
-            <div className="flex-1 max-w-sm mx-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Ders ara..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full pl-10 pr-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm shadow-sm"
-                  list="search-history"
-                />
-                <datalist id="search-history">
-                  {searchHistory.map((term, index) => (
-                    <option key={index} value={term} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <div className="relative group">
-                <button 
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className={`p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${
-                    isFilterOpen ? 'bg-gray-100 dark:bg-gray-800' : ''
-                  }`}
-                >
-                  <Filter className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Filtrele
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
-              </div>
-              <div className="relative group">
-                <button 
-                  onClick={() => setIsNotesSidebarOpen(true)}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                >
-                  <StickyNote className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Not Ekle
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
-              </div>
-              <div className="relative group">
-                <button
-                  onClick={() => {
-                    if (!document.fullscreenElement) {
-                      document.documentElement.requestFullscreen();
-                    } else {
-                      document.exitFullscreen();
-                      toast.info("Tam ekran modu kapatıldı");
-                    }
-                  }}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                >
-                  <Maximize className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Tam Ekran
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900 dark:border-b-gray-100"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Filters - Conditional */}
-          {isFilterOpen && (
-            <div className="bg-gray-50/50 dark:bg-gray-800/30 rounded-lg p-1.5 border border-gray-200/50 dark:border-gray-700/50">
-              <div className="flex flex-wrap items-center justify-center gap-1">
-                <ModernSelect
-                  options={categories.map(category => ({
-                    value: category,
-                    label: category === "Tümü" ? "Tüm Kategoriler" : category
-                  }))}
-                  value={selectedCategory}
-                  onChange={setSelectedCategory}
-                  placeholder="Kategori"
-                  className="min-w-[100px] text-xs"
-                />
-
-                <ModernSelect
-                  options={levels.map(level => ({
-                    value: level,
-                    label: level === "Tümü" ? "Tüm Seviyeler" : level
-                  }))}
-                  value={selectedLevel}
-                  onChange={setSelectedLevel}
-                  placeholder="Seviye"
-                  className="min-w-[80px] text-xs"
-                />
-
-                <ModernSelect
-                  options={statuses.map(status => ({
-                    value: status,
-                    label: status === "Tümü" ? "Tüm Durumlar" : 
-                           status === "aktif" ? "Aktif" :
-                           status === "tamamlanan" ? "Tamamlanan" :
-                           status === "gelecek" ? "Gelecek" : status
-                  }))}
-                  value={selectedStatus}
-                  onChange={setSelectedStatus}
-                  placeholder="Durum"
-                  className="min-w-[80px] text-xs"
-                />
-
-                <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setSelectedCategory("Tümü");
-                    setSelectedLevel("Tümü");
-                    setSelectedStatus("Tümü");
-                  }}
-                  className="flex items-center gap-1 px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-lg transition-all duration-200 text-xs font-medium"
-                >
-                  <X className="h-3 w-3" />
-                  Temizle
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <StudentNavbar 
+        title="Derslerim"
+        subtitle="Tüm derslerinizi buradan yönetin"
+        icon={<BookOpen className="h-5 w-5 text-white" />}
+        breadcrumb={{
+          items: [
+            {
+              label: "Ana Sayfa",
+              href: "/",
+              icon: <Home className="h-3 w-3" />
+            },
+            {
+              label: "Derslerim",
+              active: true
+            }
+          ]
+        }}
+      />
 
       {/* Courses Grid */}
       <div className={`px-4 py-4 pb-16 transition-all duration-300 ${
-        isFilterOpen ? 'pt-32' : 'pt-16'
+        isFilterOpen ? 'pt-40' : 'pt-24'
       }`}>
         {filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
